@@ -10,111 +10,79 @@
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
    化け摺り  BAKEZURI  — a marbling-printer wearing a riso disguise.
-   "a yokai pretending to be a salaryman."
    One engine: a shared wet ink-field. Riso is that engine holding still.
    Sgueltch suite · 2026
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* CJK display — yokai / mincho / wet threshold */
 @font-face{
   font-family:"Bakezuri-CJK-Display";
   src:url("Bakezuri-CJK-Display.woff2") format("woff2");
   font-display:swap;
-  unicode-range:
-    U+3000-303F, U+3040-309F, U+30A0-30FF, U+31F0-31FF,
-    U+4E00-9FFF, U+FF00-FFEF;
+  unicode-range: U+3000-303F, U+3040-309F, U+30A0-30FF, U+31F0-31FF, U+4E00-9FFF, U+FF00-FFEF;
 }
-
-/* Latin display — romaji / old-print eccentricity */
 @font-face{
   font-family:"Bakezuri-Latin-Display";
   src:url("Bakezuri-Latin-Display.woff2") format("woff2");
   font-display:swap;
   unicode-range:U+0000-00FF, U+0100-024F;
 }
-
-/* CJK UI — salaryman / gothic / machine clarity */
 @font-face{
   font-family:"Bakezuri-CJK-UI";
   src:url("Bakezuri-CJK-UI.woff2") format("woff2");
   font-display:swap;
-  unicode-range:
-    U+3000-303F, U+3040-309F, U+30A0-30FF, U+31F0-31FF,
-    U+4E00-9FFF, U+FF00-FFEF;
+  unicode-range: U+3000-303F, U+3040-309F, U+30A0-30FF, U+31F0-31FF, U+4E00-9FFF, U+FF00-FFEF;
 }
-
-/* Latin UI — corporate panel / labels */
 @font-face{
   font-family:"Bakezuri-Latin-UI";
   src:url("Bakezuri-Latin-UI.woff2") format("woff2");
   font-display:swap;
   unicode-range:U+0000-00FF, U+0100-024F;
 }
-
-/* Mono — spec sheet / registration / LCD */
 @font-face{
   font-family:"Bakezuri-Mono";
   src:url("Bakezuri-Mono.woff2") format("woff2");
   font-display:swap;
 }
 
-
 :root{
-  /* The community copier at midnight. Lampblack & sumi under a konbini tube,
-     punctured by riso fluoro, iridescent violet, and a contaminated vermilion
-     seal. No pure white / no pure black; every neutral keeps a bias. */
-  --bath-void:  #090a0d;   /* the midnight room */
-  --bath-deep:  #0c0e12;   /* recessed inset / lampblack tray */
-  --bath-panel: #16181e;   /* brushed panel module */
-  --bath-rim:   #2a2e37;   /* panel edge / engraving */
-  --bath-lift:  #3b424e;   /* raised bezel edge */
-
-  --lampblack:  #100c0a;   /* warm sumi near-black (bath interior) */
-  --tube:       #cdebd6;   /* konbini fluorescent green-white */
+  --bath-void:  #090a0d;
+  --bath-deep:  #0c0e12;
+  --bath-panel: #16181e;
+  --bath-rim:   #2a2e37;
+  --bath-lift:  #3b424e;
+  --lampblack:  #100c0a;
+  --tube:       #cdebd6;
   --tube-core:  #eafff3;
   --tube-glow:  rgba(150,240,190,.5);
-  --vermilion:  #d4452c;   /* contaminated hanko red */
+  --vermilion:  #d4452c;
   --vermilion2: #a8331f;
-
-  --paper:      #e7efe1;   /* default print stock (also the JS bg) */
-  --moon:       #e9e5dd;   /* warm near-white ink text */
-  --silt:       #8b929d;   /* dim panel label (cool gray) */
-  --ghost:      #565d68;   /* almost-hidden mono */
-  --read:       #9fe8c4;   /* LCD readout green */
-
-  --riso:       #ff3d86;   /* riso fluorescent */
+  --paper:      #e7efe1;
+  --moon:       #e9e5dd;
+  --silt:       #8b929d;
+  --ghost:      #565d68;
+  --read:       #9fe8c4;
+  --riso:       #ff3d86;
   --riso-soft:  #ff79b1;
-  --jade:       #2fe0c0;   /* live / water sheen */
-  --iris:       #7b6ff0;   /* iridescent violet */
-  --gold:       #e9c24a;   /* riso yellow flag */
-
+  --jade:       #2fe0c0;
+  --iris:       #7b6ff0;
+  --gold:       #e9c24a;
   --riso-glow:  rgba(255,61,134,.40);
   --jade-glow:  rgba(47,224,192,.34);
   --iris-glow:  rgba(123,111,240,.40);
   --bezel:      rgba(255,255,255,.055);
   --bezel-d:    rgba(0,0,0,.55);
-
   --f-disp-jp: "Shippori Mincho","Kaisei Tokumin",serif;
   --f-disp-en: "Fraunces","Shippori Mincho",serif;
-
   --f-ui-jp:   "Zen Kaku Gothic New","IBM Plex Sans JP",sans-serif;
   --f-ui-en:   "IBM Plex Sans","Zen Kaku Gothic New",system-ui,sans-serif;
-
   --f-mono:    "IBM Plex Mono","Space Mono","Courier New",monospace;
   --f-pixel:   "DotGothic16","IBM Plex Mono",monospace;
-
-  /* compatibility with existing CSS */
   --f-disp: var(--f-disp-jp);
   --f-ui:   var(--f-ui-en);
 }
 
 *{ box-sizing:border-box; margin:0; padding:0; }
-html, body { 
-  margin: 0; 
-  height: 100%; /* Keep viewport fixed */
-
-}
-
+html, body { margin: 0; height: 100%; }
 body {
   font-family:var(--f-ui-en), var(--f-ui-jp), system-ui, sans-serif;
   color: var(--moon);
@@ -126,42 +94,15 @@ body {
   display: flex; 
   flex-direction: column; 
   align-items: center;
-  padding: clamp(1rem, 3vw, 2.4rem) 1rem 4rem; /* Restored original padding */
-  overflow-x: hidden; /* Prevent horizontal stretching only */
+  padding: clamp(1rem, 3vw, 2.4rem) 1rem 4rem;
+  overflow-x: hidden;
 }
 
+.kanji, .jp, .tate, .hanko, .well .ico, .cdot{ font-family:var(--f-disp-jp); }
+.romaji{ font-family:var(--f-disp-en); }
+.gloss{ font-family:var(--f-ui-en), var(--f-ui-jp), system-ui, sans-serif; }
+.suite-line, .bath-status, .reg, .note, .chain-head, .ctag, .disguise-read, .ctl .lab, .openrow label, footer{ font-family:var(--f-mono); }
 
-.kanji,
-.jp,
-.tate,
-.hanko,
-.well .ico,
-.cdot{
-  font-family:var(--f-disp-jp);
-}
-
-.romaji{
-  font-family:var(--f-disp-en);
-}
-
-.gloss{
-  font-family:var(--f-ui-en), var(--f-ui-jp), system-ui, sans-serif;
-}
-
-.suite-line,
-.bath-status,
-.reg,
-.note,
-.chain-head,
-.ctag,
-.disguise-read,
-.ctl .lab,
-.openrow label,
-footer{
-  font-family:var(--f-mono);
-}
-
-/* faint room ambience — the tube's spill and a couple of cold reflections */
 body::before{
   content:''; position:fixed; inset:-20%; z-index:-1; pointer-events:none;
   background:
@@ -174,93 +115,32 @@ body::before{
 @keyframes sheen{ from{ transform:translate(-1%,-1%); } to{ transform:translate(2%,1.5%); } }
 @media (prefers-reduced-motion:reduce){ body::before{ animation:none; } }
 
-/* ── masthead ─────────────────────────────────────────────────────────────── */
 header{ width:100%; max-width:1080px; margin-bottom:1.1rem; }
-.suite-line{
-  display:flex; align-items:center; gap:.55rem; flex-wrap:wrap;
-  font-family:var(--f-mono); font-size:.62rem; letter-spacing:.28em;
-  text-transform:uppercase; color:var(--silt); margin-bottom:.7rem;
-}
+.suite-line{ display:flex; align-items:center; gap:.55rem; flex-wrap:wrap; font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; color:var(--silt); margin-bottom:.7rem; }
 .suite-line a{ color:var(--jade); text-decoration:none; border-bottom:1px solid transparent; }
 .suite-line a:hover{ border-bottom-color:var(--jade); }
 .suite-line .sep{ color:var(--riso); }
-
 .title-row{ display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap; }
-.kanji{
-  font-family:var(--f-disp); font-weight:800; line-height:.9;
-  font-size:clamp(2.8rem,9vw,5.2rem); letter-spacing:.04em;
-  color:var(--moon);
-  /* near-symmetric wet-ink shadow, slightly off true */
-  text-shadow:
-    0 0 1px var(--iris),
-    .04em .05em 0 rgba(123,111,240,.34),
-    -.02em .03em 0 rgba(47,224,192,.22),
-    0 .5em 40px rgba(123,111,240,.25);
-}
-.romaji{
-  font-family:var(--f-disp); font-style:italic; font-weight:400;
-  font-size:clamp(1rem,3vw,1.7rem); color:var(--silt); letter-spacing:.02em;
-}
+.kanji{ font-size:clamp(2.8rem,9vw,5.2rem); font-weight:800; line-height:.9; letter-spacing:.04em; color:var(--moon); text-shadow: 0 0 1px var(--iris), .04em .05em 0 rgba(123,111,240,.34), -.02em .03em 0 rgba(47,224,192,.22), 0 .5em 40px rgba(123,111,240,.25); }
+.romaji{ font-size:clamp(1rem,3vw,1.7rem); font-style:italic; font-weight:400; color:var(--silt); letter-spacing:.02em; }
 .romaji b{ color:var(--riso-soft); font-weight:600; font-style:normal; }
-.gloss{
-  font-family:var(--f-ui); font-size:.82rem; color:var(--silt);
-  margin-top:.5rem; max-width:54ch; line-height:1.5;
-}
+.gloss{ font-size:.82rem; color:var(--silt); margin-top:.5rem; max-width:54ch; line-height:1.5; }
 .gloss em{ color:var(--moon); font-style:normal; }
 
-/* ── studio: bath + console ──────────────────────────────────────────────── */
-.studio {
-  width: 100%; 
-  max-width: 1080px;
-  display: grid; 
-  grid-template-columns: minmax(0, 1fr) 320px; 
-  gap: 1.1rem;
-  align-items: start; /* Align elements to the top of the row grid */
-}
+.studio { width: 100%; max-width: 1080px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 1.1rem; align-items: start; }
 @media (max-width: 880px) {
-  body {
-    overflow: auto; /* Fallback to macro scrolling */
-  }
-.studio { 
-    grid-template-columns: 1fr; 
-  }
-  .console {
-    position: static;
-    max-height: none;
-    overflow: visible;
-    padding-right: 0;
-  }
-
-/* Webkit browser scrollbar tune-up */
-.console::-webkit-scrollbar {
-  width: 6px;
-}
-.console::-webkit-scrollbar-track {
-  background: var(--bath-deep);
-  border-radius: 3px;
-}
-.console::-webkit-scrollbar-thumb {
-  background: var(--iris);
-  border-radius: 3px;
-}
+  body { overflow: auto; }
+  .studio { grid-template-columns: 1fr; }
+  .console { position: static; max-height: none; overflow: visible; padding-right: 0; }
 }
 
-/* the bath — hero. registration crop-marks frame it like a print bed. */
 .bath-wrap{ position:relative; }
 .bath{
   position:relative;
-  background:
-    linear-gradient(135deg, rgba(123,111,240,.05), transparent 40%),
-    var(--bath-deep);
-  border:1px solid var(--bath-rim);
-  border-radius:3px;
-  padding:18px;
-  box-shadow:
-    inset 0 0 0 1px rgba(47,224,192,.06),
-    inset 0 30px 80px rgba(3,8,12,.5),
-    0 24px 70px rgba(2,6,10,.5);
+  background: radial-gradient(135deg, rgba(123,111,240,.05), transparent 40%), var(--bath-deep);
+  border:1px solid var(--bath-rim); border-radius:3px; padding:18px;
+  box-shadow: inset 0 0 0 1px rgba(47,224,192,.06), inset 0 30px 80px rgba(3,8,12,.5), 0 24px 70px rgba(2,6,10,.5);
 }
-/* crop marks at the four corners — the print shop. near-symmetric. */
 .crop{ position:absolute; width:20px; height:20px; pointer-events:none; opacity:.7; }
 .crop::before,.crop::after{ content:''; position:absolute; background:var(--silt); }
 .crop::before{ width:100%; height:1px; }
@@ -270,261 +150,127 @@ header{ width:100%; max-width:1080px; margin-bottom:1.1rem; }
 .crop.tr::before,.crop.br::before{ right:0; } .crop.tr::after,.crop.br::after{ right:0; }
 .crop.bl::before{ bottom:0; }      .crop.br::after{ bottom:0; }
 
-#tank{
-  display:block; width:100%; height:auto; border-radius:2px;
-  cursor:crosshair; touch-action:none;
-  image-rendering:auto;
-  box-shadow:0 0 0 1px rgba(0,0,0,.4);
-}
+#tank{ display:block; width:100%; height:auto; border-radius:2px; cursor:crosshair; touch-action:none; image-rendering:auto; box-shadow:0 0 0 1px rgba(0,0,0,.4); }
 #tank.frozen{ cursor:default; }
-
-.bath-status{
-  display:flex; justify-content:space-between; align-items:center; gap:1rem;
-  margin-top:.7rem; font-family:var(--f-mono); font-size:.66rem;
-  letter-spacing:.12em; color:var(--ghost); text-transform:uppercase;
-}
+.bath-status{ display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-top:.7rem; font-size:.66rem; letter-spacing:.12em; color:var(--ghost); text-transform:uppercase; }
 .bath-status .live{ color:var(--jade); }
 .bath-status .frozenflag{ color:var(--riso); }
-.reg{ font-family:var(--f-mono); font-size:.6rem; color:var(--ghost); letter-spacing:.2em; }
+.reg{ font-size:.6rem; color:var(--ghost); letter-spacing:.2em; }
 
-/* process chain — the bath's material history as a horizontal strip */
-.chain{ display:flex; align-items:center; gap:.5rem; margin-top:.6rem;
-  background:linear-gradient(160deg,var(--bath-panel),var(--bath-deep));
-  border:1px solid var(--bath-rim); border-radius:11px; padding:.5rem .6rem; }
-.chain-head{ font-family:var(--f-mono); font-size:.56rem; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--silt); white-space:nowrap; display:flex; align-items:center; gap:.3rem; }
+.chain{ display:flex; align-items:center; gap:.5rem; margin-top:.6rem; background:linear-gradient(160deg,var(--bath-panel),var(--bath-deep)); border:1px solid var(--bath-rim); border-radius:11px; padding:.5rem .6rem; }
+.chain-head{ font-size:.56rem; letter-spacing:.18em; text-transform:uppercase; color:var(--silt); white-space:nowrap; display:flex; align-items:center; gap:.3rem; }
 .chain-head .jp{ font-family:var(--f-disp); font-size:.9rem; color:var(--iris); }
 .chain-nodes{ display:flex; gap:.3rem; align-items:center; overflow-x:auto; flex:1; padding-bottom:2px; }
-.chain-empty{ font-family:var(--f-mono); font-size:.58rem; color:var(--ghost); white-space:nowrap; }
-.chip{ display:flex; align-items:center; gap:.2rem; cursor:pointer; flex:0 0 auto;
-  border:1px solid var(--bath-lift); border-radius:8px; padding:.22rem .4rem;
-  background:var(--bath-deep); transition:.12s; }
+.chain-empty{ font-size:.58rem; color:var(--ghost); white-space:nowrap; }
+.chip{ display:flex; align-items:center; gap:.2rem; cursor:pointer; flex:0 0 auto; border:1px solid var(--bath-lift); border-radius:8px; padding:.22rem .4rem; background:var(--bath-deep); transition:.12s; }
 .chip:hover{ border-color:var(--moon); transform:translateY(-1px); }
 .chip.pass{ border-left:2px solid var(--iris); }
-.chip.bleed{ border-left:2px solid var(--jade); font-family:var(--f-mono); font-size:.66rem; color:var(--jade); }
+.chip.bleed{ border-left:2px solid var(--jade); font-size:.66rem; color:var(--jade); }
 .chip.pend{ border-style:dashed; opacity:.9; animation:pulse 1.4s ease-in-out infinite; cursor:default; }
 @keyframes pulse{ 50%{ opacity:.45; } }
-.cdot{ width:11px; height:11px; border-radius:50% 50% 48% 52%; border:1px solid rgba(0,0,0,.3);
-  display:inline-grid; place-items:center; font-family:var(--f-disp); font-size:.5rem; color:#fff; }
+.cdot{ width:11px; height:11px; border-radius:50% 50% 48% 52%; border:1px solid rgba(0,0,0,.3); display:inline-grid; place-items:center; font-size:.5rem; color:#fff; }
 .cdot.sep{ background:var(--gold); color:#1a1206; }
-.ctag{ font-family:var(--f-mono); font-size:.54rem; color:var(--silt); letter-spacing:.05em; }
-.chain-undo{ font-family:var(--f-ui); font-size:.66rem; color:var(--silt); white-space:nowrap;
-  background:var(--bath-deep); border:1px solid var(--bath-rim); border-radius:8px; padding:.3rem .5rem; cursor:pointer; }
+.ctag{ font-size:.54rem; color:var(--silt); letter-spacing:.05em; }
+.chain-undo{ font-size:.66rem; color:var(--silt); white-space:nowrap; background:var(--bath-deep); border:1px solid var(--bath-rim); border-radius:8px; padding:.3rem .5rem; cursor:pointer; }
 .chain-undo:hover{ color:var(--moon); border-color:var(--riso); }
 
-/* console column — organs clustered, not tiled */
-.console {
-  display: flex; 
-  flex-direction: column; 
-  gap: .85rem;
-  
-  /* Sticky behavior + Inner view containment */
-  position: sticky;
-  top: 20px; /* Distance from top of viewport when scrolling */
-  max-height: calc(100vh - 60px); /* Keeps it within look-range of the screen */
-  overflow-y: auto; 
-  padding-right: 6px;
-  
-  /* Scrollbar Aesthetics */
-  scrollbar-width: thin; 
-  scrollbar-color: var(--iris) var(--bath-deep);
-}
+.console { display: flex; flex-direction: column; gap: .85rem; position: sticky; top: 20px; max-height: calc(100vh - 60px); overflow-y: auto; padding-right: 6px; scrollbar-width: thin; scrollbar-color: var(--iris) var(--bath-deep); }
+.console::-webkit-scrollbar { width: 6px; }
+.console::-webkit-scrollbar-track { background: var(--bath-deep); border-radius: 3px; }
+.console::-webkit-scrollbar-thumb { background: var(--iris); border-radius: 3px; }
 
-/* Webkit browser scrollbar tune-up */
-.console::-webkit-scrollbar {
-  width: 6px;
-}
-.console::-webkit-scrollbar-track {
-  background: var(--bath-deep);
-  border-radius: 3px;
-}
-.console::-webkit-scrollbar-thumb {
-  background: var(--iris);
-  border-radius: 3px;
-}
-.organ{
-  background:linear-gradient(160deg, var(--bath-panel), var(--bath-deep));
-  border:1px solid var(--bath-rim);
-  border-radius:14px 14px 16px 12px; /* slightly off — never exact */
-  padding:.9rem .95rem 1rem;
-  position:relative;
-}
-.organ > h2{
-  font-family:var(--f-mono); font-size:.6rem; font-weight:700;
-  letter-spacing:.24em; text-transform:uppercase; color:var(--silt);
-  display:flex; align-items:center; gap:.5rem; margin-bottom:.7rem;
-}
+.organ{ background:linear-gradient(160deg, var(--bath-panel), var(--bath-deep)); border:1px solid var(--bath-rim); border-radius:14px 14px 16px 12px; padding:.9rem .95rem 1rem; position:relative; }
+.organ > h2{ font-size:.6rem; font-weight:700; letter-spacing:.24em; text-transform:uppercase; color:var(--silt); display:flex; align-items:center; gap:.5rem; margin-bottom:.7rem; }
 .organ > h2 .jp{ font-family:var(--f-disp); font-size:.92rem; color:var(--moon); letter-spacing:.06em; }
 .organ > h2 .dot{ width:6px; height:6px; border-radius:50%; background:var(--iris); box-shadow:0 0 8px var(--iris-glow); }
 
-/* the signature control: the disguise slider */
 .disguise h2 .dot{ background:var(--riso); box-shadow:0 0 8px var(--riso-glow); }
 .disguise-track{ position:relative; padding:.2rem 0 .1rem; }
 .poles{ display:flex; justify-content:space-between; margin-bottom:.35rem; }
-.pole{ text-align:center; }
+.pole { text-align:center; }
 .pole .jp{ font-family:var(--f-disp); font-size:1.1rem; display:block; line-height:1; }
-.pole .en{ font-family:var(--f-mono); font-size:.54rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ghost); }
+.pole .en{ font-size:.54rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ghost); }
 .pole.yokai .jp{ color:var(--iris); }
 .pole.sarari .jp{ color:var(--riso); }
-input[type=range]{
-  -webkit-appearance:none; appearance:none; width:100%; height:5px;
-  border-radius:4px; background:linear-gradient(90deg,var(--iris),#2a3b50 45%, #3a2540 55%,var(--riso));
-  outline:none; margin:.25rem 0;
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none; width:20px; height:20px; border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, #fff8, var(--moon) 30%, var(--bath-lift) 75%);
-  border:1px solid var(--bath-lift);
-  box-shadow:0 0 0 1px rgba(0,0,0,.4), 0 3px 10px rgba(0,0,0,.5), 0 0 14px var(--iris-glow);
-  cursor:grab;
-}
+input[type=range]{ -webkit-appearance:none; appearance:none; width:100%; height:5px; border-radius:4px; background:linear-gradient(90deg,var(--iris),#2a3b50 45%, #3a2540 55%,var(--riso)); outline:none; margin:.25rem 0; }
+input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff8, var(--moon) 30%, var(--bath-lift) 75%); border:1px solid var(--bath-lift); box-shadow:0 0 0 1px rgba(0,0,0,.4), 0 3px 10px rgba(0,0,0,.5), 0 0 14px var(--iris-glow); cursor:grab; }
 input[type=range]::-webkit-slider-thumb:active{ cursor:grabbing; }
-input[type=range]::-moz-range-thumb{
-  width:20px; height:20px; border-radius:50%; border:1px solid var(--bath-lift);
-  background:radial-gradient(circle at 35% 30%, #fff8, var(--moon) 30%, var(--bath-lift) 75%);
-  box-shadow:0 0 14px var(--iris-glow); cursor:grab;
-}
-.disguise-read{ font-family:var(--f-mono); font-size:.6rem; color:var(--silt); text-align:center; letter-spacing:.14em; margin-top:.15rem; }
+input[type=range]::-moz-range-thumb{ width:20px; height:20px; border-radius:50%; border:1px solid var(--bath-lift); background:radial-gradient(circle at 35% 30%, #fff8, var(--moon) 30%, var(--bath-lift) 75%); box-shadow:0 0 14px var(--iris-glow); cursor:grab; }
+.disguise-read{ font-size:.6rem; color:var(--silt); text-align:center; letter-spacing:.14em; margin-top:.15rem; }
 
-/* tool row — inks as wells + surfactant */
 .tools{ display:flex; flex-wrap:wrap; gap:.5rem; }
-.well{
-  position:relative; width:46px; height:46px; border-radius:50% 50% 48% 52%;
-  border:1px solid var(--bath-lift); cursor:pointer;
-  box-shadow:inset 0 -6px 12px rgba(0,0,0,.35), inset 0 4px 8px rgba(255,255,255,.12);
-  transition:transform .12s ease;
-  display:grid; place-items:center;
-}
+.well{ position:relative; width:46px; height:46px; border-radius:50% 50% 48% 52%; border:1px solid var(--bath-lift); cursor:pointer; box-shadow:inset 0 -6px 12px rgba(0,0,0,.35), inset 0 4px 8px rgba(255,255,255,.12); transition:transform .12s ease; display:grid; place-items:center; }
 .well:hover{ transform:translateY(-2px) scale(1.04); }
 .well.sel{ outline:2px solid var(--moon); outline-offset:2px; }
 .well .ico{ font-family:var(--f-disp); font-size:.85rem; color:#0008; mix-blend-mode:overlay; }
-.well.surf{
-  background:repeating-conic-gradient(from 0deg, rgba(255,255,255,.16) 0 8%, transparent 8% 16%), var(--bath-rim);
-}
+.well.surf{ background:repeating-conic-gradient(from 0deg, rgba(255,255,255,.16) 0 8%, transparent 8% 16%), var(--bath-rim); }
 .well.surf .ico{ color:var(--moon); mix-blend-mode:normal; font-size:1.1rem; }
 
 .ink-edit{ margin-top:.75rem; display:flex; flex-direction:column; gap:.5rem; }
 .ink-edit .row{ display:flex; align-items:center; gap:.5rem; }
-.ink-edit label{ font-family:var(--f-mono); font-size:.58rem; letter-spacing:.12em; text-transform:uppercase; color:var(--silt); flex:0 0 64px; }
-.ink-edit select, .ink-edit input[type=color]{
-  background:var(--bath-deep); color:var(--moon); border:1px solid var(--bath-rim);
-  border-radius:7px; font-family:var(--f-ui); font-size:.74rem; padding:.28rem .4rem; flex:1;
-}
+.ink-edit label{ font-size:.58rem; letter-spacing:.12em; text-transform:uppercase; color:var(--silt); flex:0 0 64px; }
+.ink-edit select, .ink-edit input[type=color]{ background:var(--bath-deep); color:var(--moon); border:1px solid var(--bath-rim); border-radius:7px; font-size:.74rem; padding:.28rem .4rem; flex:1; }
 .ink-edit input[type=color]{ padding:.1rem; height:30px; cursor:pointer; }
 
-/* generic labelled sliders */
 .ctl{ display:flex; flex-direction:column; gap:.15rem; margin-bottom:.55rem; }
 .ctl:last-child{ margin-bottom:0; }
-.ctl .lab{ display:flex; justify-content:space-between; font-family:var(--f-mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--silt); }
+.ctl .lab{ display:flex; justify-content:space-between; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:var(--silt); }
 .ctl .lab .v{ color:var(--moon); }
 .ctl input[type=range]{ background:linear-gradient(90deg, var(--bath-rim), var(--jade)); height:4px; }
 .ctl input[type=range]::-webkit-slider-thumb{ width:15px; height:15px; box-shadow:0 0 10px var(--jade-glow); }
 .ctl input[type=range]::-moz-range-thumb{ width:15px; height:15px; box-shadow:0 0 10px var(--jade-glow); }
 
 .seg{ display:flex; gap:.3rem; }
-.seg button{
-  flex:1; background:var(--bath-deep); color:var(--silt); border:1px solid var(--bath-rim);
-  border-radius:8px; font-family:var(--f-ui); font-size:.72rem; padding:.4rem .2rem; cursor:pointer;
-  transition:.12s;
-}
+.seg button{ flex:1; background:var(--bath-deep); color:var(--silt); border:1px solid var(--bath-rim); border-radius:8px; font-size:.72rem; padding:.4rem .2rem; cursor:pointer; transition:.12s; }
 .seg button.on{ background:var(--bath-lift); color:var(--moon); border-color:var(--jade); }
 .seg button:hover{ color:var(--moon); }
 
-/* time + save */
 .deck{ display:flex; flex-direction:column; gap:.6rem; }
 .btn-row{ display:flex; gap:.5rem; }
-button.act{
-  flex:1; font-family:var(--f-ui); font-weight:500; font-size:.8rem;
-  padding:.55rem .4rem; border-radius:10px; cursor:pointer; transition:.12s;
-  border:1px solid var(--bath-lift); background:var(--bath-panel); color:var(--moon);
-}
+button.act{ flex:1; font-weight:500; font-size:.8rem; padding:.55rem .4rem; border-radius:10px; cursor:pointer; transition:.12s; border:1px solid var(--bath-lift); background:var(--bath-panel); color:var(--moon); }
 button.act:hover{ border-color:var(--jade); }
-button.snap{
-  background:linear-gradient(150deg, var(--riso), #c01f5e); color:#fff; border:none;
-  box-shadow:0 4px 18px var(--riso-glow); font-weight:700;
-}
+button.snap{ background:linear-gradient(150deg, var(--riso), #c01f5e); color:#fff; border:none; box-shadow:0 4px 18px var(--riso-glow); font-weight:700; }
 button.snap:hover{ filter:brightness(1.08); }
 button.act.resume{ border-color:var(--jade); color:var(--jade); }
 
-/* the save triplet — the through-line as three extensions */
 .saves{ display:flex; flex-direction:column; gap:.4rem; }
-.save-line{
-  display:flex; align-items:center; gap:.6rem; padding:.5rem .55rem;
-  background:var(--bath-deep); border:1px solid var(--bath-rim); border-radius:9px;
-  cursor:pointer; transition:.12s; text-align:left;
-}
+.save-line{ display:flex; align-items:center; gap:.6rem; padding:.5rem .55rem; background:var(--bath-deep); border:1px solid var(--bath-rim); border-radius:9px; cursor:pointer; transition:.12s; text-align:left; }
 .save-line:hover{ border-color:var(--moon); }
-.save-line .ext{ font-family:var(--f-mono); font-size:.74rem; flex:0 0 auto; }
-.save-line .jp{ font-family:var(--f-disp); font-size:.95rem; }
-.save-line .desc{ font-family:var(--f-ui); font-size:.62rem; color:var(--silt); margin-left:auto; text-align:right; line-height:1.25; }
+.save-line .ext{ font-size:.74rem; flex:0 0 auto; }
+.save-line .jp{ font-size:.95rem; }
+.save-line .desc{ font-size:.62rem; color:var(--silt); margin-left:auto; text-align:right; line-height:1.25; }
 .save-line.png .ext{ color:var(--silt); }
 .save-line.urumi .ext, .save-line.urumi .jp{ color:var(--jade); }
 .save-line.bake .ext, .save-line.bake .jp{ color:var(--iris); }
 
 .openrow{ display:flex; gap:.5rem; align-items:center; margin-top:.2rem; }
-.openrow label{
-  flex:1; text-align:center; font-family:var(--f-mono); font-size:.62rem; letter-spacing:.12em;
-  text-transform:uppercase; color:var(--silt); border:1px dashed var(--bath-lift);
-  border-radius:8px; padding:.45rem; cursor:pointer; transition:.12s;
-}
+.openrow label{ flex:1; text-align:center; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--silt); border:1px dashed var(--bath-lift); border-radius:8px; padding:.45rem; cursor:pointer; transition:.12s; }
 .openrow label:hover{ color:var(--moon); border-color:var(--jade); }
 
-.note{ font-family:var(--f-mono); font-size:.56rem; color:var(--ghost); line-height:1.5; letter-spacing:.04em; margin-top:.2rem; }
+.note{ font-size:.56rem; color:var(--ghost); line-height:1.5; letter-spacing:.04em; margin-top:.2rem; }
+footer{ width:100%; max-width:1080px; margin-top:1.4rem; font-size:.58rem; color:var(--ghost); letter-spacing:.1em; line-height:1.6; }
+footer .jp{ color:var(--silt); }
 
-footer{
-  width:100%; max-width:1080px; margin-top:1.4rem;
-  font-family:var(--f-mono); font-size:.58rem; color:var(--ghost);
-  letter-spacing:.1em; line-height:1.6;
-}
-footer .jp{ font-family:var(--f-disp); color:var(--silt); }
-/* ═══ MACHINE-PANEL SKIN — the digital-first copier the tsukumogami built ═══ */
-
-/* the bath: a recessed lampblack tray lit from above by one fluorescent tube */
 .bath-wrap{ position:relative; padding-top:16px; }
-.bath{
-  background:
-    radial-gradient(ellipse 92% 58% at 50% 0%, rgba(150,240,190,.11), transparent 62%),
-    linear-gradient(180deg, var(--lampblack), #0a0807);
-  border:1px solid var(--bath-rim); border-radius:6px; padding:16px;
-  box-shadow:
-    inset 0 2px 0 var(--bezel), inset 0 0 0 1px rgba(0,0,0,.6),
-    inset 0 24px 70px rgba(0,0,0,.7), 0 1px 0 var(--bezel), 0 18px 50px rgba(0,0,0,.6);
-}
+.bath{ background: radial-gradient(ellipse 92% 58% at 50% 0%, rgba(150,240,190,.11), transparent 62%), linear-gradient(180deg, var(--lampblack), #0a0807); border:1px solid var(--bath-rim); border-radius:6px; padding:16px; box-shadow: inset 0 2px 0 var(--bezel), inset 0 0 0 1px rgba(0,0,0,.6), inset 0 24px 70px rgba(0,0,0,.7), 0 1px 0 var(--bezel), 0 18px 50px rgba(0,0,0,.6); }
 #tank{ box-shadow:0 0 0 1px rgba(0,0,0,.6), 0 6px 24px rgba(0,0,0,.5); border-radius:1px; }
 
-/* the fluorescent tube bar with a faint sickly flicker */
-.tube{
-  position:absolute; top:3px; left:14%; right:14%; height:7px; border-radius:4px; z-index:2;
-  background:linear-gradient(180deg, var(--tube-core), var(--tube) 55%, #8fc7a8);
-  box-shadow:0 0 10px var(--tube-glow), 0 0 28px var(--tube-glow), 0 0 64px rgba(150,240,190,.28),
-    inset 0 -1px 2px rgba(0,0,0,.25);
-  animation:flicker 8s steps(1) infinite;
-}
-.tube::after{ content:''; position:absolute; inset:-3px 8px; border-radius:50%;
-  background:radial-gradient(ellipse, rgba(234,255,243,.45), transparent 70%); filter:blur(3px); }
+.tube{ position:absolute; top:3px; left:14%; right:14%; height:7px; border-radius:4px; z-index:2; background:linear-gradient(180deg, var(--tube-core), var(--tube) 55%, #8fc7a8); box-shadow:0 0 10px var(--tube-glow), 0 0 28px var(--tube-glow), 0 0 64px rgba(150,240,190,.28), inset 0 -1px 2px rgba(0,0,0,.25); animation:flicker 8s steps(1) infinite; }
+.tube::after{ content:''; position:absolute; inset:-3px 8px; border-radius:50%; background:radial-gradient(ellipse, rgba(234,255,243,.45), transparent 70%); filter:blur(3px); }
 @keyframes flicker{ 0%,68%,72%,93%,100%{opacity:1;} 70%{opacity:.9;} 94%{opacity:.5;} 95%{opacity:1;} 96%{opacity:.72;} 97%{opacity:1;} }
 @media (prefers-reduced-motion:reduce){ .tube{ animation:none; } }
 
-/* tategaki title down beside the bath (Heian seam) */
-.tate{
-  position:absolute; top:22px; left:-2rem; writing-mode:vertical-rl; text-orientation:upright;
-  font-family:var(--f-disp); font-weight:800; font-size:1.45rem; letter-spacing:.12em;
-  color:#c2bdb2; opacity:.5; text-shadow:0 0 14px rgba(150,240,190,.16); pointer-events:none;
-}
+.tate{ position:absolute; top:22px; left:-2rem; writing-mode:vertical-rl; text-orientation:upright; font-family:var(--f-disp); font-weight:800; font-size:1.45rem; letter-spacing:.12em; color:#c2bdb2; opacity:.5; text-shadow:0 0 14px rgba(150,240,190,.16); pointer-events:none; }
 @media (max-width:980px){ .tate{ display:none; } }
 
 .crop::before,.crop::after{ background:var(--silt); opacity:.55; }
 .bath-status .live{ color:var(--jade); text-shadow:0 0 8px var(--jade-glow); }
 
-/* console modules */
-.organ{ background:linear-gradient(180deg, var(--bath-panel), #111318);
-  box-shadow:inset 0 1px 0 var(--bezel), 0 1px 2px var(--bezel-d), 0 5px 14px rgba(0,0,0,.35); }
+.organ{ background:linear-gradient(180deg, var(--bath-panel), #111318); box-shadow:inset 0 1px 0 var(--bezel), 0 1px 2px var(--bezel-d), 0 5px 14px rgba(0,0,0,.35); }
 .organ > h2{ border-bottom:1px solid rgba(0,0,0,.4); padding-bottom:.5rem; box-shadow:0 1px 0 var(--bezel); }
 .organ > h2 .dot{ box-shadow:0 0 7px currentColor; }
 
-/* LCD process strip */
-.chain{ background:linear-gradient(180deg,#0a140f,#08110c); border-color:#163a2c;
-  box-shadow:inset 0 2px 8px rgba(0,0,0,.7), inset 0 0 0 1px rgba(150,240,190,.04); }
+.chain{ background:linear-gradient(180deg,#0a140f,#08110c); border-color:#163a2c; box-shadow:inset 0 2px 8px rgba(0,0,0,.7), inset 0 0 0 1px rgba(150,240,190,.04); }
 .chain-head{ color:#4e7a68; }
 .chain-head .jp{ color:var(--read); text-shadow:0 0 8px rgba(150,240,190,.3); }
 .chain-empty{ color:#3c5a4c; }
@@ -535,29 +281,16 @@ footer .jp{ font-family:var(--f-disp); color:var(--silt); }
 .chain-undo{ background:#0c1712; border-color:#1c4233; color:#7fae98; }
 .chain-undo:hover{ color:var(--read); border-color:var(--read); }
 
-/* tactile panel buttons */
-button.act{ background:linear-gradient(180deg, var(--bath-panel), #12141a);
-  box-shadow:inset 0 1px 0 var(--bezel), 0 1px 2px var(--bezel-d); }
+button.act{ background:linear-gradient(180deg, var(--bath-panel), #12141a); box-shadow:inset 0 1px 0 var(--bezel), 0 1px 2px var(--bezel-d); }
 button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translateY(1px); }
 
-/* the hanko — the pull is a stamp */
 .png-row{ display:flex; align-items:center; gap:.7rem; }
 .png-row .pngsub{ display:flex; flex-direction:column; gap:.35rem; flex:1; }
 .png-row .ext{ color:var(--silt); }
-.hanko{
-  width:60px; height:60px; flex:0 0 auto;
-  border-radius:48% 52% 50% 50% / 52% 48% 52% 48%;
-  background:radial-gradient(circle at 38% 32%, var(--vermilion), var(--vermilion2) 82%);
-  border:2px solid #7e2516; color:#fff3ee;
-  font-family:var(--f-disp); font-weight:800; font-size:1.5rem;
-  display:grid; place-items:center; cursor:pointer;
-  box-shadow:inset 0 2px 6px rgba(255,255,255,.18), inset 0 -4px 8px rgba(0,0,0,.4), 0 4px 14px rgba(212,69,44,.35);
-  transition:transform .1s, box-shadow .1s; text-shadow:0 1px 2px rgba(0,0,0,.4);
-}
+.hanko{ width:60px; height:60px; flex:0 0 auto; border-radius:48% 52% 50% 50% / 52% 48% 52% 48%; background:radial-gradient(circle at 38% 32%, var(--vermilion), var(--vermilion2) 82%); border:2px solid #7e2516; color:#fff3ee; font-family:var(--f-disp); font-weight:800; font-size:1.5rem; display:grid; place-items:center; cursor:pointer; box-shadow:inset 0 2px 6px rgba(255,255,255,.18), inset 0 -4px 8px rgba(0,0,0,.4), 0 4px 14px rgba(212,69,44,.35); transition:transform .1s, box-shadow .1s; text-shadow:0 1px 2px rgba(0,0,0,.4); }
 .hanko:hover{ transform:translateY(-1px) rotate(-2deg); }
 .hanko:active{ transform:translateY(2px) scale(.95); box-shadow:inset 0 3px 8px rgba(0,0,0,.5); }
 
-/* play button reads as a lit machine key when active */
 #playBtn{ box-shadow:inset 0 1px 0 var(--bezel), 0 1px 2px var(--bezel-d); }
 </style>
 </head>
@@ -581,7 +314,6 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
 
 <div class="studio">
 
-  <!-- ── THE BATH ─────────────────────────────────────────────────────── -->
   <div class="bath-wrap">
     <div class="tate">化け摺り</div>
     <div class="tube"></div>
@@ -599,11 +331,10 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
       <div class="chain-nodes" id="chainNodes"></div>
       <div class="chain-pending" id="pendingChip"></div>
       <button class="chain-undo" id="commitPassBtn" style="color: var(--jade); border-color: var(--bath-lift); margin-right: 0.3rem;">✓ commit pass</button>
-<button class="chain-undo" id="undoBtn" data-i18n="undo">↶ undo</button>
+      <button class="chain-undo" id="undoBtn" data-i18n="undo">↶ undo</button>
     </div>
   </div>
 
-  <!-- ── CONSOLE ──────────────────────────────────────────────────────── -->
   <div class="console">
 
     <div class="organ disguise">
@@ -642,6 +373,18 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
             <option value="water">water — repels set ink</option>
           </select>
         </div>
+        <div class="row"><label data-i18n="targetChannel">target</label>
+          <select id="inkTarget">
+            <option value="brightness">brightness / luminance</option>
+            <option value="r">red channel</option>
+            <option value="g">green channel</option>
+            <option value="b">blue channel</option>
+            <option value="cyan">cyan component</option>
+            <option value="magenta">magenta component</option>
+            <option value="yellow">yellow component</option>
+            <option value="contrast">local contrast / variance</option>
+          </select>
+        </div>
         <div class="row" id="colorRow"><label id="colorLab" data-i18n="colour">colour</label>
           <input type="color" id="inkColor" value="#1f6fd0">
         </div>
@@ -664,7 +407,7 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
       <div class="ctl"><div class="lab"><span data-i18n="grainF">grain feathering</span><span class="v" id="grainV">—</span></div>
         <input type="range" id="grain" min="0" max="100" value="46"></div>
       <div class="row" style="display:flex;align-items:center;gap:.5rem;margin-top:.7rem">
-        <label style="font-family:var(--f-mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--silt);flex:1"><span data-i18n="background">background</span> <span style="color:var(--ghost)" data-i18n="renderOnly">· render only</span></label>
+        <label style="font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--silt);flex:1"><span data-i18n="background">background</span> <span style="color:var(--ghost)" data-i18n="renderOnly">· render only</span></label>
         <input type="color" id="bgColor" value="#e7efe1" style="background:var(--bath-deep);border:1px solid var(--bath-rim);border-radius:7px;height:30px;width:54px;padding:.1rem;cursor:pointer">
       </div>
       <div class="ctl" style="margin-top:.55rem"><div class="lab"><span data-i18n="substrate">substrate</span></div>
@@ -744,68 +487,49 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
 
 <script>
 "use strict";
-/* ════════════════════════════════════════════════════════════════════════
-   BAKEZURI ENGINE
-   A shared wet ink-field. Up to 4 inks, each a conserved float load per cell.
-   Per frame: deposit splats add budget → diffusion bleeds & feathers →
-   subtractive (or additive) resolve → halftone screen → canvas.
-   Riso = this same engine with wetness low, fix high, screen on. One slider.
-   ════════════════════════════════════════════════════════════════════════ */
 
 const tank = document.getElementById('tank');
 const tctx = tank.getContext('2d', { willReadFrequently:false });
 
-let NUM_INKS = 4;   // dynamic — tracks inks.length; the gamut you can widen/narrow
+let NUM_INKS = 4;
 let W = tank.width, H = tank.height;
 
-// ── ink palette ───────────────────────────────────────────────────────────
-// Each ink: a conserved load field. type decides how that load resolves.
-//   flat       — fixed subtractive hue (the riso-legible one)
-//   shift      — hue rotates with load (concentration changes the colour)
-//   duo        — interpolates color→color2 as load grows (thin vs thick are
-//                different inks; impossible in print)
-//   glow       — emissive: adds light instead of absorbing (fluorescent riso)
-//   iridescent — thin-film interference; colour computed from load + its slope
 const inks = [
-  { name:'sumi-teal',  kanji:'藍', type:'flat',       color:'#15808f', color2:'#0a3b6e' },
-  { name:'riso-pink',  kanji:'桃', type:'glow',       color:'#ff2f7a', color2:'#ffd23f' },
-  { name:'oil',        kanji:'虹', type:'iridescent', color:'#8a7bff', color2:'#2fe0c0' },
-  { name:'bruise',     kanji:'痣', type:'duo',        color:'#6a3fb0', color2:'#1f9c84' },
+  { name:'sumi-teal',  kanji:'藍', type:'flat',       targetChannel:'brightness', color:'#15808f', color2:'#0a3b6e' },
+  { name:'riso-pink',  kanji:'桃', type:'glow',       targetChannel:'r',          color:'#ff2f7a', color2:'#ffd23f' },
+  { name:'oil',        kanji:'虹', type:'iridescent', targetChannel:'g',          color:'#8a7bff', color2:'#2fe0c0' },
+  { name:'bruise',     kanji:'痣', type:'duo',        targetChannel:'b',          color:'#6a3fb0', color2:'#1f9c84' },
 ];
 
-// ── field buffers ───────────────────────────────────────────────────────────
-let loadA, loadB;   // [NUM_INKS] Float32Array(W*H) — ping-pong
-let grainField;     // static permeability noise (paper grain / membrane)
-let fixField;       // 0..1 set amount per cell (paper fixes; water doesn't)
-let waterSum, repelDelta;   // water-ink repulsion fields
-let img;            // ImageData for output
-let active;         // dirty rect {x0,y0,x1,y1} — only sim/resolve here
+let loadA, loadB;
+let grainField;
+let fixField;
+let waterSum, repelDelta;
+let img;
+let active;
 
 function alloc(){
   loadA = []; loadB = [];
   for(let k=0;k<NUM_INKS;k++){ loadA.push(new Float32Array(W*H)); loadB.push(new Float32Array(W*H)); }
   fixField = new Float32Array(W*H);
   grainField = new Float32Array(W*H);
-  waterSum = new Float32Array(W*H);    // combined water-ink load (for repulsion)
-  repelDelta = new Float32Array(W*H);  // scratch for conservative repel moves
-  // two-octave value noise — coherent permeability, never repeating
+  waterSum = new Float32Array(W*H);
+  repelDelta = new Float32Array(W*H);
   for(let y=0;y<H;y++) for(let x=0;x<W;x++){
     const n = Math.sin(x*0.071+2.1)*Math.cos(y*0.083+1.3)*0.5
             + Math.sin(x*0.027+5.2)*Math.cos(y*0.041+4.4)*0.5;
-    grainField[y*W+x] = 0.5 + 0.5*n;        // 0..1
+    grainField[y*W+x] = 0.5 + 0.5*n;
   }
   img = tctx.createImageData(W,H);
   active = null;
 }
 
-// add/remove inks live — grows or shrinks the gamut without wiping the bath
 const INK_KANJI = ['藍','桃','虹','痣','苔','霧','燐','錆'];
-const INK_TYPES = ['flat','shift','duo','glow','iridescent','water'];
 function addInk(){
   if(inks.length>=8) return;
   const idx=inks.length;
   inks.push({ name:'ink'+(idx+1), kanji:INK_KANJI[idx%INK_KANJI.length],
-              type:'shift', color:'#3fb0c8', color2:'#e9c24a' });
+              type:'shift', targetChannel:'brightness', color:'#3fb0c8', color2:'#e9c24a' });
   loadA.push(new Float32Array(W*H)); loadB.push(new Float32Array(W*H));
   NUM_INKS=inks.length; P.selInk=idx; P.tool='ink';
   refreshInkRGB(); buildTools(); syncInkEditor();
@@ -819,49 +543,37 @@ function removeInk(idx){
   if(active) resolve();
 }
 
-// ── parameters (read live from UI) ─────────────────────────────────────────
 const P = {
   disguise:0.14, wetness:0.78, bleed:0.52, grain:0.46,
   substrate:'water', mixing:'subtractive', pitch:7, dotJitter:0.42,
-  selInk:0, tool:'ink'    // tool: 'ink' | 'surfactant'
+  selInk:0, tool:'ink'
 };
 
-// per-cell pseudo-random — two values in [0,1) from integer cell coords.
-// the tsukumogami's hand: each dot lands a little off the grid, a little
-// off-size, as if a spirit pressed a thousand brushes trying to be a machine.
 function cellHash(cu,cv){
   let a=Math.sin(cu*127.1+cv*311.7)*43758.5453; a-=Math.floor(a);
   let b=Math.sin(cu*269.5+cv*183.3)*43758.5453; b-=Math.floor(b);
   return [a,b];
 }
 
-// disguise blends a bundle of parameters: 0 = yokai/marble, 1 = salaryman/riso
 function disguised(){
   const d = P.disguise;
   return {
-    wet:    P.wetness*(1-d) + 0.05*d,          // riso barely flows
-    bleed:  P.bleed*(1-d*0.85),                 // riso tightens
-    fixRate:(P.substrate==='paper'?0.006:0.0) + d*0.05,  // riso fixes fast
-    screen: Math.max(0, (d-0.18)/0.82),         // screen appears past ~18% toward salaryman
-    jitter: (1-d)*0.9 + 0.06,                   // riso = near-regular dots
+    wet:    P.wetness*(1-d) + 0.05*d,
+    bleed:  P.bleed*(1-d*0.85),
+    fixRate:(P.substrate==='paper'?0.006:0.0) + d*0.05,
+    screen: Math.max(0, (d-0.18)/0.82),
+    jitter: (1-d)*0.9 + 0.06,
     feather:P.grain*(1-d*0.7),
   };
 }
 
-// ── score (the .bakezuri) — seedless by construction. no rng state stored. ──
-// ── PROCESS CHAIN ────────────────────────────────────────────────────────────
-// The bath is static until you act. Marks accumulate into a pending pass; a
-// bleed (steps or play) accumulates into a pending bleed. Crossing from one to
-// the other commits the previous as a node. Sequence is material: each node acts
-// on the field the earlier nodes left behind — an ink mixes with what came
-// before it, never with what comes after.
-let chain = [];          // committed nodes
-let committedInkCount = 0; // Track how many inks are locked into history
-let pendingMarks = [];   // deposits not yet committed
-let pendingBleed = 0;    // bleed steps not yet committed
-let pendingSeparation = false; // Track uncommitted image separations
+let chain = [];
+let committedInkCount = 0;
+let pendingMarks = [];
+let pendingBleed = 0;
+let pendingSeparation = false;
 let loadsTotal = 0;
-const MAX_SNAPS = 18;    // keep exact field snapshots for the most recent N nodes
+const MAX_SNAPS = 18;
 
 function snapshotField(){
   return { load: loadA.map(a=>Float32Array.from(a)), fix:Float32Array.from(fixField), n:NUM_INKS };
@@ -895,16 +607,13 @@ function commitBleed(){
   pendingBleed=0; trimSnaps(); rebuildChainUI();
 }
 
-// deposit a mark — close any open bleed first, then extend the pending pass
 function addMark(ev){
   if(pendingBleed>0) commitBleed();
-  // If there's a pending separation, we append marks to the same upcoming pass
   pendingMarks.push(ev); 
   applyDeposit(ev); 
   resolve(); 
   rebuildChainUI();
 }
-// run bleed steps — close any open pass first, then accumulate
 function bleedSteps(n){
   if(pendingMarks.length) commitPass();
   for(let i=0;i<n;i++) step();
@@ -933,7 +642,6 @@ function scrubTo(idx){
   buildTools();
 }
 
-// ── deposition ──────────────────────────────────────────────────────────────
 function markActive(cx,cy,r){
   const x0=Math.max(0,cx-r-2), y0=Math.max(0,cy-r-2);
   const x1=Math.min(W-1,cx+r+2), y1=Math.min(H-1,cy+r+2);
@@ -942,7 +650,6 @@ function markActive(cx,cy,r){
          active.x1=Math.max(active.x1,x1); active.y1=Math.max(active.y1,y1); }
 }
 
-// conserved ink: spread a fixed budget over a soft disk (so density thins as it grows)
 function depositInk(k, cx, cy, r, amount){
   const f = loadA[k];
   let wsum=0; const cells=[];
@@ -950,19 +657,18 @@ function depositInk(k, cx, cy, r, amount){
     for(let x=cx-r;x<=cx+r;x++){ if(x<0||x>=W) continue;
       const dx=x-cx, dy=y-cy, d2=dx*dx+dy*dy, rr=r*r;
       if(d2>rr) continue;
-      const w = 1 - Math.sqrt(d2)/r;           // soft falloff
+      const w = 1 - Math.sqrt(d2)/r;
       cells.push((y*W+x)); wsum += w*w;
     }}
   if(wsum<=0) return;
   for(let i=0;i<cells.length;i++){
     const idx=cells[i]; const dx=(idx%W)-cx, dy=(idx/W|0)-cy;
     const w = 1 - Math.sqrt(dx*dx+dy*dy)/r;
-    f[idx] += amount * (w*w)/wsum;             // total deposited ≈ amount (conserved)
+    f[idx] += amount * (w*w)/wsum;
   }
   markActive(cx,cy,r);
 }
 
-// surfactant: add no ink — displace existing total load radially outward (suminagashi push)
 function depositSurfactant(cx, cy, r){
   const push = r*1.4;
   for(let k=0;k<NUM_INKS;k++){
@@ -974,9 +680,8 @@ function depositSurfactant(cx, cy, r){
         if(d>r) continue;
         const idx=y*W+x; const v=f[idx];
         if(v<=0) continue;
-        // move this cell's load to a point pushed outward along its radius
         const ang = Math.atan2(dy,dx);
-        const nd = d + push*(1 - d/r);          // inner cells pushed most
+        const nd = d + push*(1 - d/r);
         const nx = Math.round(cx+Math.cos(ang)*nd), ny = Math.round(cy+Math.sin(ang)*nd);
         snapshot.push([idx, nx, ny, v]);
       }}
@@ -988,17 +693,15 @@ function depositSurfactant(cx, cy, r){
   markActive(cx,cy,Math.ceil(push+r));
 }
 
-// ensure a clear water ink exists; returns its index (or -1 if palette full)
 function ensureWaterInk(){
   for(let k=0;k<inks.length;k++) if(inks[k].type==='water') return k;
   if(inks.length>=8) return -1;
-  inks.push({name:'water',kanji:'水',type:'water',color:'#bfe9ff',color2:'#bfe9ff'});
+  inks.push({name:'water',kanji:'水',type:'water',targetChannel:'brightness',color:'#bfe9ff',color2:'#bfe9ff'});
   loadA.push(new Float32Array(W*H)); loadB.push(new Float32Array(W*H));
   NUM_INKS=inks.length; refreshInkRGB(); buildTools();
   return inks.length-1;
 }
-// lay the riso screen as repulsion — a halftone lattice of water dots that
-// pushes already-set inks into the gaps between them.
+
 function depositWaterScreen(pitch){
   const wk=ensureWaterInk(); if(wk<0) return;
   pitch=Math.max(3,pitch||P.pitch);
@@ -1026,15 +729,12 @@ function applyDeposit(ev){
   else { depositInk(ev.ink, ev.x, ev.y, ev.r, ev.amount); loadsTotal++; }
 }
 
-// ── simulation step: bleed (diffusion) + grain feathering + fix ─────────────
 function step(){
   if(!active) return;
   const D = disguised();
   if(D.wet<=0.001 && D.bleed<=0.001 && D.fixRate<=0) return;
   const {x0,y0,x1,y1} = active;
-  const flow = 0.16 * D.wet * (0.3 + D.bleed);   // base diffusion rate
-  // grain feathering: per-cell permeability biases how fast ink crosses — makes
-  // the bleed front finger instead of staying a clean circle.
+  const flow = 0.16 * D.wet * (0.3 + D.bleed);
   const fAmt = D.feather;
 
   for(let k=0;k<NUM_INKS;k++){
@@ -1042,27 +742,22 @@ function step(){
     for(let y=y0;y<=y1;y++){
       for(let x=x0;x<=x1;x++){
         const i=y*W+x; const c=src[i];
-        // neighbours (4-conn, clamped)
         const l = x>0   ? src[i-1] : c;
         const rr= x<W-1 ? src[i+1] : c;
         const u = y>0   ? src[i-W] : c;
         const dn= y<H-1 ? src[i+W] : c;
         const lap = (l+rr+u+dn - 4*c);
-        // permeability gate from grain — feathering pulls bleed through loose grain
         const g = grainField[i];
         const perm = 1 + fAmt*(g-0.5)*2.2;
         let rate = flow * perm * (1 - fixField[i]*0.95);
-        if(rate<0) rate=0; if(rate>0.24) rate=0.24;   // stability clamp
+        if(rate<0) rate=0; if(rate>0.24) rate=0.24;
         dst[i] = c + rate*lap;
         if(dst[i]<0) dst[i]=0;
       }
     }
-    // copy untouched border-of-rect cleanly by swapping whole arrays
     loadA[k]=dst; loadB[k]=src;
   }
 
-  // water repulsion — pigment-less water ink pushes set inks down its gradient.
-  // conservative: load only moves between cells, never appears or vanishes.
   let hasWater=false; for(let k=0;k<NUM_INKS;k++) if(inks[k].type==='water'){hasWater=true;break;}
   if(hasWater){
     for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++){ const i=y*W+x; let w=0;
@@ -1070,7 +765,7 @@ function step(){
       waterSum[i]=w; }
     const repelRate=0.5;
     for(let k=0;k<NUM_INKS;k++){
-      if(inks[k].type==='water') continue;       // water doesn't repel water
+      if(inks[k].type==='water') continue;
       const f=loadA[k];
       for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++) repelDelta[y*W+x]=0;
       for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++){
@@ -1091,7 +786,6 @@ function step(){
     }
   }
 
-  // fixing (paper sets; water stays mobile). only where ink exists.
   if(D.fixRate>0){
     for(let y=y0;y<=y1;y++) for(let x=x0;x<=x1;x++){
       const i=y*W+x;
@@ -1100,20 +794,12 @@ function step(){
     }
   }
 
-  // grow active rect by 1 (ink can advance 1 cell/step)
   active.x0=Math.max(0,active.x0-1); active.y0=Math.max(0,active.y0-1);
   active.x1=Math.min(W-1,active.x1+1); active.y1=Math.min(H-1,active.y1+1);
 }
 
-// ── colour resolve ──────────────────────────────────────────────────────────
-// Two layers, kept ontologically distinct:
-//   STOCK — fixed reference the separation solves against ("ideal paper")
-//   bg    — the display background the ink sits on. A RENDER property only:
-//           never written into .urumizuri or .bakezuri. Change it freely; the
-//           ink data doesn't move. This split is also what makes transparent
-//           PNG export fall out for free.
-const STOCK = [0xf3/255, 0xf6/255, 0xef/255];   // light neutral stock (not pure white)
-let bg = [0xe7/255, 0xef/255, 0xe1/255];        // cool green-white — the default surface
+const STOCK = [0xf3/255, 0xf6/255, 0xef/255];
+let bg = [0xe7/255, 0xef/255, 0xe1/255];
 
 function hexToRGB(h){ return [parseInt(h.slice(1,3),16)/255, parseInt(h.slice(3,5),16)/255, parseInt(h.slice(5,7),16)/255]; }
 let inkRGB = inks.map(k=>hexToRGB(k.color));
@@ -1122,9 +808,7 @@ function refreshInkRGB(){ inkRGB = inks.map(k=>hexToRGB(k.color)); inkRGB2 = ink
 
 function thinfilm(t, phase){
   const p = t*2.4 + phase;
-  return [ 0.5+0.5*Math.cos(6.2831*(p+0.00)),
-           0.5+0.5*Math.cos(6.2831*(p+0.33)),
-           0.5+0.5*Math.cos(6.2831*(p+0.66)) ];
+  return [ 0.5+0.5*Math.cos(6.2831*(p+0.00)), 0.5+0.5*Math.cos(6.2831*(p+0.33)), 0.5+0.5*Math.cos(6.2831*(p+0.66)) ];
 }
 function hueShift(rgb, amt){
   const [r,g,b]=rgb, mx=Math.max(r,g,b), mn=Math.min(r,g,b), l=(mx+mn)/2, d=mx-mn;
@@ -1144,20 +828,17 @@ function screenThresh(x,y,pitch,jitter,k){
   const ang = 0.35 + k*0.55;
   const ca=Math.cos(ang), sa=Math.sin(ang);
   const u = (x*ca - y*sa), v = (x*sa + y*ca);
-  const cu = Math.round(u/pitch), cv = Math.round(v/pitch);     // cell id
+  const cu = Math.round(u/pitch), cv = Math.round(v/pitch);
   const [h0,h1] = cellHash(cu*7+k*97, cv*7-k*53);
   const g = grainField[(y*W+x)]-0.5;
-  const scat = Math.min(1.2, jitter*0.5 + P.dotJitter);          // hand-press scatter
-  const ox = ((h0-0.5) + g*0.35)*scat*pitch;                     // jitter cell centre
+  const scat = Math.min(1.2, jitter*0.5 + P.dotJitter);
+  const ox = ((h0-0.5) + g*0.35)*scat*pitch;
   const oy = ((h1-0.5) - g*0.35)*scat*pitch;
   const du = u - (cu*pitch+ox), dv = v - (cv*pitch+oy);
-  const sizeF = Math.max(0.4, 1 + (h0-0.5)*scat*0.9);            // some dots fat, some thin
+  const sizeF = Math.max(0.4, 1 + (h0-0.5)*scat*0.9);
   return Math.min(1, Math.sqrt(du*du+dv*dv)/(pitch*0.72*sizeF));
 }
 
-// Core resolve. out = Uint8ClampedArray. background = [r,g,b] or null (transparent
-// ink-only). rect defaults to the active dirty region. screenOn toggles the
-// display halftone overlay (off for raw ink-only export).
 function computeField(out, background, rect, screenOn){
   const D = disguised();
   const pitch = P.pitch;
@@ -1170,15 +851,15 @@ function computeField(out, background, rect, screenOn){
   for(let y=r1;y<=r3;y++){
     for(let x=r0;x<=r2;x++){
       const i=y*W+x;
-      let T0=1,T1=1,T2=1;                 // subtractive transmittance over baseB
-      let aR=0,aG=0,aB=0;                 // emissive / additive
-      let irR=0,irG=0,irB=0,irCov=0;      // iridescent sheen (reflective)
+      let T0=1,T1=1,T2=1;
+      let aR=0,aG=0,aB=0;
+      let irR=0,irG=0,irB=0,irCov=0;
       let covU=0, maxCov=0;
 
       for(let k=0;k<NUM_INKS;k++){
         const L=loadA[k][i]; if(L<=0.0008) continue;
         const t=inks[k].type;
-        if(t==='water') continue;          // clear: no colour, no coverage — only repels
+        if(t==='water') continue;
         const cov = 1-Math.exp(-L*1.5);
         covU = 1-(1-covU)*(1-cov); if(cov>maxCov) maxCov=cov;
         if(t==='iridescent'){
@@ -1197,19 +878,17 @@ function computeField(out, background, rect, screenOn){
         }
       }
 
-      // subtractive film over background, plus emissive
       let r=T0*baseB[0]+aR, g=T1*baseB[1]+aG, b=T2*baseB[2]+aB;
       if(irCov>0){ irR/=irCov; irG/=irCov; irB/=irCov; const s=Math.min(1,irCov)*0.85;
         r=1-(1-r)*(1-irR*s); g=1-(1-g)*(1-irG*s); b=1-(1-b)*(1-irB*s); }
       if(r>1)r=1; if(g>1)g=1; if(b>1)b=1;
 
-      // halftone display overlay — the dots, strengthening toward salaryman
       if(screenOn && D.screen>0 && maxCov>0.002){
         let dk=0,dl=-1; for(let k=0;k<NUM_INKS;k++){ if(loadA[k][i]>dl){dl=loadA[k][i];dk=k;} }
         const on = maxCov > screenThresh(x,y,pitch,D.jitter,dk) ? 1 : 0;
         const dr=on?r:baseB[0], dg=on?g:baseB[1], db=on?b:baseB[2];
         r=r*(1-D.screen)+dr*D.screen; g=g*(1-D.screen)+dg*D.screen; b=b*(1-D.screen)+db*D.screen;
-        if(transparent && !on) covU=0;   // ink-only: screened-off cells are empty
+        if(transparent && !on) covU=0;
       }
 
       const o=i*4;
@@ -1227,9 +906,6 @@ function paintPaperAll(){
   tctx.putImageData(img,0,0);
 }
 
-// ── loop ────────────────────────────────────────────────────────────────────
-// The bath is static unless you're playing the bleed. Deposits and steps render
-// on demand; only "play" runs the field continuously (counting into the chain).
 let running=false, raf=null;
 function frame(){
   if(running){ step(); pendingBleed++; resolve(); updatePending(); }
@@ -1238,7 +914,6 @@ function frame(){
 function play(){ if(running) return; if(pendingMarks.length) commitPass(); running=true; updateTimeUI(); }
 function pause(){ if(!running) return; running=false; commitBleed(); updateTimeUI(); }
 
-// ── pointer → deposit ───────────────────────────────────────────────────────
 function canvasXY(e){
   const r=tank.getBoundingClientRect();
   const x=Math.floor((e.clientX-r.left)/r.width*W);
@@ -1252,7 +927,7 @@ function depoAt(x,y){
   else addMark({tool:'ink', ink:P.selInk, x, y, r, amount:1.7});
 }
 tank.addEventListener('pointerdown', e=>{
-  if(running) return;                 // deposit only while paused
+  if(running) return;
   tank.setPointerCapture(e.pointerId); drawing=true;
   const [x,y]=canvasXY(e); depoAt(x,y); lastT=performance.now();
 });
@@ -1264,7 +939,6 @@ tank.addEventListener('pointermove', e=>{
 tank.addEventListener('pointerup',  ()=>{ drawing=false; });
 tank.addEventListener('pointercancel',()=>{ drawing=false; });
 
-// ── UI wiring ───────────────────────────────────────────────────────────────
 function inkSwatch(k){
   if(k.type==='iridescent') return 'conic-gradient(from 200deg,#ff6fae,#7b6ff0,#2fe0c0,#e9c24a,#ff6fae)';
   if(k.type==='water') return 'repeating-radial-gradient(circle at 50% 45%, rgba(191,233,255,.45) 0 2px, transparent 2px 6px), var(--bath-rim)';
@@ -1282,7 +956,7 @@ function buildTools(){
     const w=document.createElement('div'); w.className='well'+(P.tool==='ink'&&P.selInk===idx?' sel':'');
     w.style.background = inkSwatch(k);
     w.innerHTML='<span class="ico">'+k.kanji+'</span>';
-    w.title=k.name+' · '+k.type;
+    w.title=k.name+' · '+k.type+' · target:'+k.targetChannel;
     w.onclick=()=>{ P.tool='ink'; P.selInk=idx; syncInkEditor(); buildTools(); };
     host.appendChild(w);
   });
@@ -1300,6 +974,7 @@ function buildTools(){
 function syncInkEditor(){
   if (P.selInk === -1 || P.selInk < committedInkCount || P.selInk >= inks.length) {
     document.getElementById('inkType').disabled = true;
+    document.getElementById('inkTarget').disabled = true;
     document.getElementById('inkColor').disabled = true;
     document.getElementById('inkColor2').disabled = true;
     document.getElementById('addInkBtn').disabled = inks.length >= 8;
@@ -1307,6 +982,7 @@ function syncInkEditor(){
     return;
   }
   document.getElementById('inkType').disabled = false;
+  document.getElementById('inkTarget').disabled = false;
   document.getElementById('inkColor').disabled = false;
   document.getElementById('inkColor2').disabled = false;
   document.getElementById('addInkBtn').disabled = inks.length >= 8;
@@ -1314,15 +990,15 @@ function syncInkEditor(){
 
   const k=inks[P.selInk];
   document.getElementById('inkType').value=k.type;
+  document.getElementById('inkTarget').value=k.targetChannel || 'brightness';
   document.getElementById('inkColor').value=k.color;
   document.getElementById('inkColor2').value=k.color2||'#e9c24a';
   document.getElementById('colorRow').style.display  = (k.type==='iridescent'||k.type==='water') ? 'none':'flex';
   document.getElementById('color2Row').style.display = k.type==='duo' ? 'flex':'none';
   document.getElementById('colorLab').textContent = k.type==='duo' ? 'thin' : 'colour';
 }
-// ── SMART INK MODIFICATION TRACKING ─────────────────────────────────────────
+
 function modifyInkProperty(prop, val) {
-  // Check if the current ink channel slot has already left non-zero footprints in committed nodes
   let isChannelUsed = chain.some(node => {
     if (node.snap && node.snap.load && node.snap.load[P.selInk]) {
       return node.snap.load[P.selInk].some(v => v > 0.001);
@@ -1331,7 +1007,6 @@ function modifyInkProperty(prop, val) {
   });
 
   if (isChannelUsed && inks.length < 8) {
-    // Fork the ink into a brand new channel to protect historical layers
     const newIdx = inks.length;
     const duplicatedInk = Object.assign({}, inks[P.selInk], {
       [prop]: val,
@@ -1346,7 +1021,6 @@ function modifyInkProperty(prop, val) {
     P.selInk = newIdx;
     P.tool = 'ink';
   } else {
-    // Otherwise, safe to overwrite directly (uncommitted or channel ceiling reached)
     inks[P.selInk][prop] = val;
   }
   
@@ -1356,14 +1030,13 @@ function modifyInkProperty(prop, val) {
   if (active && !running) resolve();
 }
 
-// Bind updated smart modifiers to UI events
 document.getElementById('inkType').onchange = e => { modifyInkProperty('type', e.target.value); };
+document.getElementById('inkTarget').onchange = e => { modifyInkProperty('targetChannel', e.target.value); };
 document.getElementById('inkColor').oninput = e => { modifyInkProperty('color', e.target.value); };
 document.getElementById('inkColor2').oninput = e => { modifyInkProperty('color2', e.target.value); };
 document.getElementById('addInkBtn').onclick=addInk;
 document.getElementById('delInkBtn').onclick=()=>removeInk(P.selInk);
 
-// background — a render property only, never written to the data files
 document.getElementById('bgColor').oninput=e=>{
   bg=hexToRGB(e.target.value); paintPaperAll(); if(active) resolve();
 };
@@ -1404,7 +1077,6 @@ document.querySelectorAll('#mixing button').forEach(b=>b.onclick=()=>{
   if(active&&!running) resolve();
 });
 
-// ── manual bleed stepping — advance the field, counted into the chain ─────────
 document.querySelectorAll('.organ .btn-row .act[data-steps]').forEach(b=>{
   b.onclick=()=>{ if(running) return; bleedSteps(+b.dataset.steps); };
 });
@@ -1412,7 +1084,6 @@ const vframes=document.getElementById('vframes'), vsteps=document.getElementById
 vframes.addEventListener('input',()=>document.getElementById('vfV').textContent=vframes.value);
 vsteps .addEventListener('input',()=>document.getElementById('vsV').textContent=vsteps.value);
 
-// ── video render — run the bleed forward, capture each frame to .webm ─────────
 const videoBtn=document.getElementById('videoBtn'), videoNote=document.getElementById('videoNote');
 let rendering=false;
 function pickMime(){
@@ -1450,7 +1121,6 @@ videoBtn.onclick=async ()=>{
   finally{ rendering=false; running=wasRunning; }
 };
 
-// ── chain UI ─────────────────────────────────────────────────────────────────
 const chainNodes=document.getElementById('chainNodes');
 const pendingChip=document.getElementById('pendingChip');
 const timeState=document.getElementById('timeState');
@@ -1498,14 +1168,11 @@ document.getElementById('resetBtn').onclick=()=>{
   buildTools();
 };
 
-// ── SAVES ───────────────────────────────────────────────────────────────────
 function download(blob, fname){
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fname;
   a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
 }
 
-// .png — the pulled print. Two surfaces from the same ink data:
-//   on background (composited over bg)  ·  ink only (transparent)
 function exportPNG(transparent){
   if(running) pause();
   const out=new Uint8ClampedArray(W*H*4);
@@ -1517,17 +1184,13 @@ function exportPNG(transparent){
 document.getElementById('savePngBg').onclick   =()=>exportPNG(false);
 document.getElementById('savePngClear').onclick=()=>exportPNG(true);
 
-// .bakezuri — the SCORE, now a process recipe: the ordered chain of passes and
-// bleeds. NO seed (can't be deterministic), NO background (a render choice).
-// Image-separation passes can't be replayed without the image, so they're flagged.
 document.getElementById('saveBake').onclick=()=>{
   flushPending();
   const doc={
     format:'bakezuri-score', version:2,
     width:W, height:H,
-    inks:inks.map(k=>({name:k.name,kanji:k.kanji,type:k.type,color:k.color,color2:k.color2})),
-    params:{ disguise:P.disguise, wetness:P.wetness, bleed:P.bleed, grain:P.grain,
-             substrate:P.substrate },
+    inks:inks.map(k=>({name:k.name,kanji:k.kanji,type:k.type,targetChannel:k.targetChannel,color:k.color,color2:k.color2})),
+    params:{ disguise:P.disguise, wetness:P.wetness, bleed:P.bleed, grain:P.grain, substrate:P.substrate },
     chain: chain.map(n => n.kind==='bleed'
       ? { kind:'bleed', steps:n.steps }
       : { kind:'pass', op:n.op, deposits:n.op==='separate'?[]:n.deposits, settings:n.settings })
@@ -1535,7 +1198,6 @@ document.getElementById('saveBake').onclick=()=>{
   download(new Blob([JSON.stringify(doc)],{type:'application/json'}), 'recipe-'+Date.now()+'.bakezuri');
 };
 
-// .urumizuri — the WET FIELD. reopens mid-bleed and resumes.
 function f32ToB64(arr){
   const u8=new Uint8Array(arr.buffer); let s=''; const C=0x8000;
   for(let i=0;i<u8.length;i+=C) s+=String.fromCharCode.apply(null,u8.subarray(i,i+C));
@@ -1543,13 +1205,11 @@ function f32ToB64(arr){
 }
 function b64ToF32(b){ const s=atob(b); const u8=new Uint8Array(s.length); for(let i=0;i<s.length;i++)u8[i]=s.charCodeAt(i); return new Float32Array(u8.buffer); }
 
-
-
 function loadParamsAndInks(doc){
   if(doc.inks && doc.inks.length){
     inks.length=0;
     doc.inks.forEach(d=>inks.push(Object.assign(
-      {name:'ink',kanji:'墨',type:'flat',color:'#888888',color2:'#888888'}, d)));
+      {name:'ink',kanji:'墨',type:'flat',targetChannel:'brightness',color:'#888888',color2:'#888888'}, d)));
     NUM_INKS=inks.length; if(P.selInk>=NUM_INKS) P.selInk=0; refreshInkRGB();
   }
   if(doc.params){ for(const key of ['wetness','bleed','grain','disguise','substrate','mixing','pitch'])
@@ -1557,16 +1217,14 @@ function loadParamsAndInks(doc){
     syncUIFromP(); }
 }
 
-// replay a recipe chain — rebuilds the live chain with fresh snapshots.
-// seedless: the bleeds re-perform, so the result differs every time.
 function replayChain(nodes){
   chain=[]; pendingMarks=[]; pendingBleed=0; loadsTotal=0; running=false;
   (nodes||[]).forEach(node=>{
     if(node.kind==='bleed'){
-      for(let i=0;i<node.steps;i++) step();
+      for(let i=0; i<node.steps; i++) step();
       pendingBleed+=node.steps; commitBleed();
     } else {
-      if(node.op==='separate') return;             // needs the image; skip on replay
+      if(node.op==='separate') return;
       if(node.settings){ if(node.settings.pitch!=null)P.pitch=node.settings.pitch;
                          if(node.settings.mixing)P.mixing=node.settings.mixing; }
       (node.deposits||[]).forEach(ev=>{ pendingMarks.push(ev); applyDeposit(ev); });
@@ -1587,123 +1245,63 @@ function syncUIFromP(){
   buildTools(); syncInkEditor();
 }
 
-
-// ── NEW: GOOPCODEC NATIVE .URUMIZURI EXPORT ─────────────────────────────────
 document.getElementById('saveUrumi').onclick = () => {
-  if (running) pause(); // Capture a still-wet instant
-  
-  // 1. Calculate cell record sizing
+  if (running) pause();
   const headerSize = 16;
-  const bytesPerCell = 1 + NUM_INKS; // 1 byte for fixField, plus 1 byte per active ink channel
+  const bytesPerCell = 1 + NUM_INKS;
   const bodySize = W * H * bytesPerCell;
   const totalSize = headerSize + bodySize;
-  
   const buffer = new ArrayBuffer(totalSize);
   const view = new DataView(buffer);
   const u8Body = new Uint8Array(buffer, headerSize);
   
-  // 2. Write Protected 16-Byte Header
-  view.setUint8(0, 0x55); // 'U'
-  view.setUint8(1, 0x52); // 'R'
-  view.setUint8(2, 0x4D); // 'M'
-  view.setUint8(3, 0x5A); // 'Z' -> Magic "URMZ"
-  view.setUint16(4, W, true); // Little-endian width
-  view.setUint16(6, H, true); // Little-endian height
-  view.setUint8(8, NUM_INKS);  // Gamut ceiling
+  view.setUint8(0, 0x55); view.setUint8(1, 0x52); view.setUint8(2, 0x4D); view.setUint8(3, 0x5A);
+  view.setUint16(4, W, true); view.setUint16(6, H, true); view.setUint8(8, NUM_INKS);
   
-  // 3. Serialize spatial layout into byte blocks
   let bIdx = 0;
-  const maxLoadScale = 12.0; // Dynamic range compression anchor for float -> byte
-  
+  const maxLoadScale = 12.0;
   for (let i = 0; i < W * H; i++) {
-    // Quantize fix field (0.0 - 1.0 -> 0 - 255)
     u8Body[bIdx++] = Math.min(255, Math.max(0, Math.round(fixField[i] * 255)));
-    
-    // Quantize active ink fields (0.0 - 12.0 -> 0 - 255)
     for (let k = 0; k < NUM_INKS; k++) {
-      const floatLoad = loadA[k][i];
-      const byteLoad = Math.min(255, Math.max(0, Math.round((floatLoad / maxLoadScale) * 255)));
-      u8Body[bIdx++] = byteLoad;
+      u8Body[bIdx++] = Math.min(255, Math.max(0, Math.round((loadA[k][i] / maxLoadScale) * 255)));
     }
   }
-  
-  // 4. Download natively with trailing manifest
   const blob = new Blob([buffer], { type: 'application/octet-stream' });
   download(blob, 'wet-' + Date.now() + '.urumizuri');
 };
 
-// ── NEW: TOLERANT GOOPCODEC .URUMIZURI DECODER ──────────────────────────────
 document.getElementById('openUrumi').onchange = e => {
   const file = e.target.files[0]; if (!file) return;
   const r = new FileReader();
-  
   r.onload = () => {
     try {
-      const buffer = r.result;
-      const view = new DataView(buffer);
-      
-      // 1. Parse Header with absolute fallback verification
+      const buffer = r.result; const view = new DataView(buffer);
       const magic = String.fromCharCode(view.getUint8(0), view.getUint8(1), view.getUint8(2), view.getUint8(3));
-      if (magic !== "URMZ") {
-        alert('Invalid magic bytes. Not a native goop-wet file.');
-        return;
-      }
-      
-      const fileW = view.getUint16(4, true);
-      const fileH = view.getUint16(6, true);
-      const fileInks = view.getUint8(8);
-      
-      // Update canvas footprint
-      W = tank.width = fileW;
-      H = tank.height = fileH;
-      NUM_INKS = fileInks;
-      
-      alloc(); // Clear buffers and match target dimension
-      
-      // 2. Read Vulnerable Body with strict error tolerance
-      const headerSize = 16;
-      const u8Body = new Uint8Array(buffer, headerSize);
-      const bytesPerCell = 1 + fileInks;
-      const maxLoadScale = 12.0;
-      
-      let bIdx = 0;
-      
+      if (magic !== "URMZ") { alert('Invalid magic bytes.'); return; }
+      W = tank.width = view.getUint16(4, true);
+      H = tank.height = view.getUint16(6, true);
+      NUM_INKS = view.getUint8(8);
+      alloc();
+      const u8Body = new Uint8Array(buffer, 16);
+      let bIdx = 0; const maxLoadScale = 12.0;
       for (let i = 0; i < W * H; i++) {
-        // TOLERANT GUARD: If text editing or truncation cuts the file short, 
-        // the decoder catches it mid-stride and breaks gracefully into dry paper
-        if (bIdx >= u8Body.length) break; 
-        
-        // Restore fix state
+        if (bIdx >= u8Body.length) break;
         fixField[i] = u8Body[bIdx++] / 255;
-        
-        // Restore ink load layers
-        for (let k = 0; k < fileInks; k++) {
+        for (let k = 0; k < NUM_INKS; k++) {
           if (bIdx >= u8Body.length) break;
-          if (k < loadA.length) {
-            loadA[k][i] = (u8Body[bIdx++] / 255) * maxLoadScale;
-          } else {
-            bIdx++; // Skip data channels that exceed current workspace allocations
-          }
+          if (k < loadA.length) loadA[k][i] = (u8Body[bIdx++] / 255) * maxLoadScale;
+          else bIdx++;
         }
       }
-      
-      // Reset interface and flush to display pipeline
-// Reset interface and flush to display pipeline
       active = { x0: 0, y0: 0, x1: W - 1, y1: H - 1 };
       chain = []; pendingMarks = []; pendingBleed = 0; loadsTotal = 0; running = false;
       committedInkCount = inks.length;
-      rebuildChainUI(); updateTimeUI(); resolve();
-      buildTools();
-      
-    } catch (err) {
-      alert('Error parsing corrupted .urumizuri body: ' + err.message);
-    }
+      rebuildChainUI(); updateTimeUI(); resolve(); buildTools();
+    } catch (err) { alert('Error parsing .urumizuri: ' + err.message); }
   };
-  
-  r.readAsArrayBuffer(file);
-  e.target.value = '';
+  r.readAsArrayBuffer(file); e.target.value = '';
 };
-// perform .bakezuri — replay the recipe; bleeds re-perform (no seed → diverges)
+
 document.getElementById('openBake').onchange=e=>{
   const file=e.target.files[0]; if(!file) return;
   const r=new FileReader();
@@ -1712,20 +1310,12 @@ document.getElementById('openBake').onchange=e=>{
     loadParamsAndInks(doc);
     if(doc.width&&doc.height){ W=tank.width=doc.width; H=tank.height=doc.height; }
     alloc(); paintPaperAll();
-    const nodes = doc.chain || (doc.deposits ? [{kind:'pass',op:'marks',deposits:doc.deposits,
-        settings:{pitch:(doc.params&&doc.params.pitch)||7,mixing:(doc.params&&doc.params.mixing)||'subtractive'}}] : []);
+    const nodes = doc.chain || (doc.deposits ? [{kind:'pass',op:'marks',deposits:doc.deposits,settings:{pitch:(doc.params&&doc.params.pitch)||7,mixing:(doc.params&&doc.params.mixing)||'subtractive'}}] : []);
     replayChain(nodes);
   }catch(err){ alert('could not read that .bakezuri'); } };
   r.readAsText(file); e.target.value='';
 };
 
-// ── IMAGE SEPARATION ────────────────────────────────────────────────────────
-// The quantization step. An arbitrary continuous image is cut into the ink set
-// (palette) on a halftone screen (grid) — both contingent, both a filter on what
-// can be said — then deposited wet so the bleed can refuse the grid.
-// Separation = non-negative least squares: find loads Lₖ≥0 such that the
-// subtractive resolve  paper·Π Cₖ^Lₖ  reconstructs the pixel. The ink set is a
-// gamut; colours outside it are approximated, not represented.
 let srcImage = null;
 const sepBtn  = document.getElementById('sepBtn');
 const sepNote = document.getElementById('sepNote');
@@ -1734,234 +1324,160 @@ document.getElementById('commitPassBtn').onclick = manualCommitPass;
 function loadImageFile(file){
   if(!file || !file.type.startsWith('image/')){ sepNote.textContent='not an image'; return; }
   const im = new Image();
-  im.onload = () => { srcImage = im; sepBtn.disabled=false;
-    sepNote.textContent = `loaded ${im.naturalWidth}×${im.naturalHeight} — press separate`; };
+  im.onload = () => { srcImage = im; sepBtn.disabled=false; sepNote.textContent = `loaded ${im.naturalWidth}×${im.naturalHeight} — press separate`; };
   im.onerror = ()=> sepNote.textContent='could not read that image';
   im.src = URL.createObjectURL(file);
 }
 document.getElementById('imgFile').onchange = e => { loadImageFile(e.target.files[0]); e.target.value=''; };
 
-// full-page drag & drop
 (function(){
   let dz = document.getElementById('dropzone');
   if(!dz){
     dz = document.createElement('div'); dz.id='dropzone';
-    dz.style.cssText='position:fixed;inset:0;z-index:9999;display:none;pointer-events:none;'
-      +'background:rgba(9,10,13,.82);backdrop-filter:blur(2px);'
-      +'align-items:center;justify-content:center;'
-      +'font-family:var(--f-disp);font-size:2rem;color:#cdebd6;text-shadow:0 0 20px rgba(150,240,190,.5);';
+    dz.style.cssText='position:fixed;inset:0;z-index:9999;display:none;pointer-events:none;background:rgba(9,10,13,.82);backdrop-filter:blur(2px);align-items:center;justify-content:center;font-family:var(--f-disp);font-size:2rem;color:#cdebd6;text-shadow:0 0 20px rgba(150,240,190,.5);';
     dz.innerHTML='<div style="border:2px dashed #2fe0c0;border-radius:20px;padding:2.5rem 4rem;text-align:center">画像を落とす<br><span style="font-family:var(--f-mono);font-size:.9rem;color:#9fe8c4;letter-spacing:.1em">drop image to separate</span></div>';
     document.body.appendChild(dz);
   }
   let depth=0;
-  const show=()=>{ dz.style.display='flex'; }, hide=()=>{ dz.style.display='none'; depth=0; };
-  window.addEventListener('dragenter', e=>{ e.preventDefault(); if(e.dataTransfer && [...e.dataTransfer.types].includes('Files')){ depth++; show(); } });
+  window.addEventListener('dragenter', e=>{ e.preventDefault(); if(e.dataTransfer && [...e.dataTransfer.types].includes('Files')){ depth++; dz.style.display='flex'; } });
   window.addEventListener('dragover',  e=>{ e.preventDefault(); });
-  window.addEventListener('dragleave', e=>{ e.preventDefault(); if(--depth<=0) hide(); });
-  window.addEventListener('drop', e=>{ e.preventDefault(); hide();
-    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    if(f) loadImageFile(f);
-  });
+  window.addEventListener('dragleave', e=>{ e.preventDefault(); if(--depth<=0) dz.style.display='none'; });
+  window.addEventListener('drop', e=>{ e.preventDefault(); dz.style.display='none'; depth=0; const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) loadImageFile(f); });
 })();
+
 sepBtn.onclick = separateImage;
 
-// Manual pass commitment ─────────────────────────────────────────────
 function manualCommitPass() {
   if (!pendingMarks.length && !pendingSeparation && pendingBleed <= 0) return;
-
   if (pendingMarks.length || pendingSeparation) {
-    chain.push({ 
-      kind: 'pass', 
-      op: pendingSeparation ? 'separate' : 'marks', 
-      deposits: pendingMarks.slice(),
-      settings: { pitch: P.pitch, mixing: P.mixing }, 
-      snap: snapshotField() 
-    });
-    pendingMarks = []; 
-    pendingSeparation = false;
-    committedInkCount = inks.length;
+    chain.push({ kind: 'pass', op: pendingSeparation ? 'separate' : 'marks', deposits: pendingMarks.slice(), settings: { pitch: P.pitch, mixing: P.mixing }, snap: snapshotField() });
+    pendingMarks = []; pendingSeparation = false; committedInkCount = inks.length;
   }
-
-  if (pendingBleed > 0) {
-    commitBleed();
-  } else {
-    trimSnaps(); 
-    rebuildChainUI();
-    buildTools();
-  }
+  if (pendingBleed > 0) commitBleed();
+  else { trimSnaps(); rebuildChainUI(); buildTools(); }
 }
 
-// ── MODIFIED: Persistent Image Separation ────────────────────────────────────
+/* ── REWORKED IMAGE SEPARATION MATRIX WITH PER-INK METRIC EXTRACTOR ── */
 function separateImage() {
   if (!srcImage) return;
   sepNote.textContent = 'separating…';
   
   let iw = srcImage.naturalWidth, ih = srcImage.naturalHeight;
-  const cap = 440;
-  const sc = Math.min(1, cap / Math.max(iw, ih));
-  iw = Math.max(8, Math.round(iw * sc)); 
-  ih = Math.max(8, Math.round(ih * sc));
+  const cap = 440; const sc = Math.min(1, cap / Math.max(iw, ih));
+  iw = Math.max(8, Math.round(iw * sc)); ih = Math.max(8, Math.round(ih * sc));
   
   if (W !== iw || H !== ih) {
-    W = tank.width = iw; 
-    H = tank.height = ih;
-    alloc(); 
-    chain = []; 
-    pendingMarks = []; 
-    pendingBleed = 0; 
-    loadsTotal = 0; 
-    running = false;
-    pendingSeparation = false;
+    W = tank.width = iw; H = tank.height = ih; alloc();
+    chain = []; pendingMarks = []; pendingBleed = 0; loadsTotal = 0; running = false; pendingSeparation = false;
   } else {
-    // ROLLBACK: Wipes out the last uncommitted separate experiment
-    restoreField(lastSnap());
-    pendingMarks = [];
-    pendingBleed = 0;
+    restoreField(lastSnap()); pendingMarks = []; pendingBleed = 0;
   }
 
-  const off = document.createElement('canvas'); 
-  off.width = W; 
-  off.height = H;
-  const octx = off.getContext('2d'); 
-  octx.drawImage(srcImage, 0, 0, W, H);
+  const off = document.createElement('canvas'); off.width = W; off.height = H;
+  const octx = off.getContext('2d'); octx.drawImage(srcImage, 0, 0, W, H);
   const src = octx.getImageData(0, 0, W, H).data;
-
-  const eps = 1e-3;
-  const Mt = [];
-  for (let k = 0; k < NUM_INKS; k++) {
-    if (inks[k].type === 'water') { Mt.push([0, 0, 0]); continue; }
-    const c = hexToRGB(inks[k].color);
-    Mt.push([ -Math.log(Math.min(1, Math.max(eps, c[0]))),
-              -Math.log(Math.min(1, Math.max(eps, c[1]))),
-              -Math.log(Math.min(1, Math.max(eps, c[2]))) ]);
-  }
-  const MtM = [];
-  for (let k = 0; k < NUM_INKS; k++) {
-    MtM.push(new Float64Array(NUM_INKS));
-    for (let j = 0; j < NUM_INKS; j++) { 
-      let s = 0; for (let c = 0; c < 3; c++) s += Mt[k][c] * Mt[j][c]; 
-      MtM[k][j] = s; 
-    }
-  }
 
   const sep = []; 
   for (let k = 0; k < NUM_INKS; k++) sep.push(new Float32Array(W * H));
-  const L = new Float64Array(NUM_INKS), a = [0, 0, 0]; 
-  const ITER = 26;
   
-  for (let i = 0; i < W * H; i++) {
-    const o = i * 4;
-    for (let c = 0; c < 3; c++) { 
-      const t = src[o + c] / 255;
-      let av = Math.log(STOCK[c] / Math.max(eps, t)); if (av < 0) av = 0; a[c] = av; 
-    }
-    for (let k = 0; k < NUM_INKS; k++) L[k] = 0.15;
-    for (let it = 0; it < ITER; it++) {
-      for (let k = 0; k < NUM_INKS; k++) {
-        let num = 0; for (let c = 0; c < 3; c++) num += Mt[k][c] * a[c];
-        let den = eps; for (let j = 0; j < NUM_INKS; j++) den += MtM[k][j] * L[j];
-        L[k] *= num / den;
+  // Calculate variance/contrast pre-pass buffer if any ink demands it
+  let localVariance = null;
+  if (inks.some(ink => ink.targetChannel === 'contrast')) {
+    localVariance = new Float32Array(W * H);
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        let sum = 0, sumSq = 0, count = 0;
+        for (let ny = Math.max(0, y - 1); ny <= Math.min(H - 1, y + 1); ny++) {
+          for (let nx = Math.max(0, x - 1); nx <= Math.min(W - 1, x + 1); nx++) {
+            const idx = (ny * W + nx) * 4;
+            const b = (src[idx] * 0.299 + src[idx + 1] * 0.587 + src[idx + 2] * 0.114) / 255;
+            sum += b; sumSq += b * b; count++;
+          }
+        }
+        const mean = sum / count;
+        localVariance[y * W + x] = Math.min(1.0, Math.sqrt(Math.max(0, (sumSq / count) - (mean * mean))) * 2.5);
       }
     }
-    for (let k = 0; k < NUM_INKS; k++) sep[k][i] = L[k];
+  }
+
+  // Linear extraction per-pixel based on each ink's configuration setup
+  for (let i = 0; i < W * H; i++) {
+    const o = i * 4;
+    const r = src[o] / 255; const g = src[o + 1] / 255; const b = src[o + 2] / 255;
+    const brightness = r * 0.299 + g * 0.587 + b * 0.114;
+    
+    for (let k = 0; k < NUM_INKS; k++) {
+      if (inks[k].type === 'water') { sep[k][i] = 0; continue; }
+      
+      const channel = inks[k].targetChannel || 'brightness';
+      let extractedValue = 0;
+      
+      switch (channel) {
+        case 'brightness': extractedValue = 1.0 - brightness; break; // Inverted to match dark ink on light substrate
+        case 'r': extractedValue = r; break;
+        case 'g': extractedValue = g; break;
+        case 'b': extractedValue = b; break;
+        case 'cyan': extractedValue = 1.0 - r; break;
+        case 'magenta': extractedValue = 1.0 - g; break;
+        case 'yellow': extractedValue = 1.0 - b; break;
+        case 'contrast': extractedValue = localVariance ? localVariance[i] : 0; break;
+        default: extractedValue = 1.0 - brightness;
+      }
+      
+      // Scaling dynamic weight anchor parameter
+      sep[k][i] = Math.max(0.0, extractedValue * 2.2);
+    }
   }
 
   halftoneDeposit(sep); 
   active = { x0: 0, y0: 0, x1: W - 1, y1: H - 1 };
   resolve();
   
-  // Flag this pass as pending instead of auto-committing
   pendingSeparation = true;
-  
-  updateTimeUI();
-  rebuildChainUI();
+  updateTimeUI(); rebuildChainUI();
   sepNote.textContent = t('sepDone').replace('{n}', NUM_INKS).replace('{p}', P.pitch);
 }
-// screen each ink's continuous load into AM dots and deposit them as wet ink.
-// per-ink rotation = riso-style channel misregistration; grain jitters the lattice.
+
 function halftoneDeposit(sep){
-  const pitch=Math.max(3,P.pitch);
-  const angles=[0.10,0.46,0.82,1.18];
+  const pitch=Math.max(3,P.pitch); const angles=[0.10,0.46,0.82,1.18];
   for(let k=0;k<NUM_INKS;k++){
     const f=sep[k], ang=angles[k%angles.length];
     const ca=Math.cos(ang), sa=Math.sin(ang);
     let umin=1e9,umax=-1e9,vmin=1e9,vmax=-1e9;
     for(const [x,y] of [[0,0],[W,0],[0,H],[W,H]]){
-      const u=x*ca+y*sa, v=-x*sa+y*ca;
-      if(u<umin)umin=u; if(u>umax)umax=u; if(v<vmin)vmin=v; if(v>vmax)vmax=v; }
+      const u=x*ca+y*sa, v=-x*sa+y*ca; if(u<umin)umin=u; if(u>umax)umax=u; if(v<vmin)vmin=v; if(v>vmax)vmax=v; }
     for(let u=umin;u<=umax;u+=pitch){
       for(let v=vmin;v<=vmax;v+=pitch){
-        const cx=Math.round(u*ca - v*sa), cy=Math.round(u*sa + v*ca);
-        if(cx<0||cx>=W||cy<0||cy>=H) continue;
+        const cx=Math.round(u*ca - v*sa), cy=Math.round(u*sa + v*ca); if(cx<0||cx>=W||cy<0||cy>=H) continue;
         const g=grainField[cy*W+cx]-0.5;
         const [h0,h1]=cellHash(Math.round(u/pitch)*7+k*31, Math.round(v/pitch)*7-k*17);
         const scat=P.dotJitter;
         const sx=Math.max(0,Math.min(W-1,Math.round(cx+((h0-0.5)+g*0.35)*scat*pitch)));
         const sy=Math.max(0,Math.min(H-1,Math.round(cy-((h1-0.5)-g*0.35)*scat*pitch)));
         const Lc=f[sy*W+sx]; if(Lc<=0.01) continue;
-        const cov=1-Math.exp(-Lc*1.5);
-        const sizeF=Math.max(0.4, 1+(h0-0.5)*scat*0.9);
+        const cov=1-Math.exp(-Lc*1.5); const sizeF=Math.max(0.4, 1+(h0-0.5)*scat*0.9);
         const r=Math.max(0.6, Math.sqrt(cov)*pitch*0.62*sizeF);
-        depositInk(k, sx, sy, Math.round(r), Lc*Math.PI*r*r);   // conserve cell load → dot
+        depositInk(k, sx, sy, Math.round(r), Lc*Math.PI*r*r);
       }
     }
   }
 }
 
-
-
-// ── i18n ─────────────────────────────────────────────────────────────────────
 const I18N = {
   tagline:   {en:'<b>bakezuri</b> — 1M dips of a brush', ja:'<b>化け摺り</b> — 百万円の筆ひと浸し'},
-  gloss:     {en:'Float ink on a wet bath; it bleeds, mixes, and never quite dries. Slide toward <em>装</em> and the same engine holds still — fixes, flattens, and prints itself in halftone dots. Time is still until you play the bleed; sequence is material — each pass lands on what the last one left.',
-              ja:'濡れた浴に墨を浮かべる。滲み、混ざり、乾ききらない。<em>装</em>へ寄せれば同じ機構が静止し、定着し、平らになり、網点で刷られる。時は止まったまま、滲みを再生するまで動かない。順序は物質だ — どの摺りも前の摺りが遺したものの上に降りる。'},
-  h_disguise:{en:'disguise', ja:'化け'}, h_separate:{en:'separate', ja:'分解'},
-  h_inks:{en:'inks', ja:'墨'}, h_bath:{en:'bath', ja:'水'}, h_screen:{en:'screen', ja:'網'},
-  h_bleed:{en:'bleed', ja:'滲み'}, h_pull:{en:'pull', ja:'摺り'}, h_process:{en:'process', ja:'経'},
-  poleSoak:{en:'soak', ja:'浸'}, poleSuit:{en:'suit', ja:'装'},
-  type:{en:'type', ja:'種'}, colour:{en:'colour', ja:'色'}, thin:{en:'thin', ja:'淡'},
-  addInk:{en:'+ add ink', ja:'＋墨を足す'}, delInk:{en:'− remove', ja:'－除く'},
-  wetness:{en:'wetness', ja:'湿り'}, bleedAmt:{en:'bleed', ja:'滲み'}, grainF:{en:'grain feathering', ja:'紙の毛羽'},
-  background:{en:'background', ja:'下地'}, renderOnly:{en:'· render only', ja:'· 表示のみ'},
-  substrate:{en:'substrate', ja:'地'}, water:{en:'水 water', ja:'水'}, paper:{en:'紙 paper', ja:'紙'},
-  overprint:{en:'overprint', ja:'重ね刷り'}, subtractive:{en:'subtractive', ja:'減法'}, additive:{en:'additive', ja:'加法'},
-  dotPitch:{en:'dot pitch', ja:'網点間隔'}, dotJitter:{en:'dot jitter', ja:'網点の揺らぎ'}, waterScreen:{en:'lay water screen 水 · repel', ja:'水の網を敷く · 反発'},
-  play:{en:'▶ play bleed', ja:'▶ 滲みを再生'}, pause:{en:'❚❚ pause', ja:'❚❚ 停止'},
-  vframes:{en:'video · frames', ja:'動画 · コマ'}, vsteps:{en:'video · steps / frame', ja:'動画 · コマ毎の歩'},
-  renderVideo:{en:'render bleed → .webm', ja:'滲みを書き出す → .webm'},
-  clearBath:{en:'clear bath', ja:'浴を流す'}, undo:{en:'↶ undo', ja:'↶ 戻す'},
-  pngBg:{en:'on background', ja:'下地つき'}, pngStamp:{en:'stamp the pull', ja:'摺りを捺す'}, pngClear:{en:'ink only', ja:'墨のみ'},
-  openUrumi:{en:'open .urumizuri', ja:'.urumizuri を開く'}, openBake:{en:'perform .bakezuri', ja:'.bakezuri を演じる'},
-  loadImg:{en:'load image', ja:'画像を読む'}, sepBtn:{en:'separate → bath', ja:'分解 → 浴'},
-  playing:{en:'playing', ja:'再生中'}, still:{en:'still', ja:'静止'},
-  nodes:{en:'nodes', ja:'節'}, marks:{en:'marks', ja:'点'}, sep:{en:'分解', ja:'分解'},
-  chainEmpty:{en:'— no passes yet · deposit, then play the bleed —', ja:'— まだ摺りなし · 置いてから滲みを再生 —'},
-  sepDone:{en:'separated into {n} inks @ pitch {p} — play the bleed to dissolve the screen', ja:'{n}色に分解 · 網点{p} — 滲みを再生して網を溶かす'},
-  noteSep:{en:'A picture, cut into your inks on the screen — palette + grid, the quantization — laid down wet so the bleed dissolves it back. Your inks are the basis; colours they can\'t mix don\'t survive.',
-           ja:'画像を網の上であなたの墨へ裁つ — 色数＋格子、量子化だ — 濡れたまま置けば滲みが解いてゆく。墨が基底、混ぜられない色は残らない。'},
-  noteBleed:{en:'Step the bleed by hand, or play it. Time only moves here.', ja:'滲みを手で進めるか、再生する。時はここでだけ動く。'},
-  noteScreen:{en:'The screen strengthens toward 装. A water screen lays the riso pattern as repulsion — set inks get pushed into the gaps.', ja:'網は装へ寄るほど強まる。水の網はリソの模様を反発として敷く — 定着した墨は隙間へ押し出される。'},
-  noteSave:{en:'Background is a viewing choice — not written into .urumizuri or .bakezuri. .bakezuri stores the whole process (passes + bleeds), seedless: every performance bleeds differently.',
-            ja:'下地は見えかたの選択 — .urumizuri にも .bakezuri にも書かれない。.bakezuri は工程全体（摺りと滲み）を種なしで保つ。演じるたび滲みは異なる。'}
+  gloss:     {en:'Float ink on a wet bath; it bleeds, mixes, and never quite dries. Slide toward <em>装</em> and the same engine holds still — fixes, flattens, and prints itself in halftone dots. Time is still until you play the bleed; sequence is material — each pass lands on what the last one left.', ja:'濡れた浴に墨を浮かべる。滲み、混ざり、乾ききらない。<em>装</em>へ寄せれば同じ機構が静止し、定着し、平らになり、網点で刷られる。時は止まったまま、滲みを再生するまで動かない。順序は物質だ — どの摺りも前の摺りが遺したものの上に降りる。'},
+  h_disguise:{en:'disguise', ja:'化け'}, h_separate:{en:'separate', ja:'分解'}, h_inks:{en:'inks', ja:'墨'}, h_bath:{en:'bath', ja:'水'}, h_screen:{en:'screen', ja:'網'}, h_bleed:{en:'bleed', ja:'滲み'}, h_pull:{en:'pull', ja:'摺り'}, h_process:{en:'process', ja:'経'}, poleSoak:{en:'soak', ja:'浸'}, poleSuit:{en:'suit', ja:'装'}, type:{en:'type', ja:'種'}, targetChannel:{en:'target', ja:'対象域'}, colour:{en:'colour', ja:'色'}, thin:{en:'thin', ja:'淡'}, addInk:{en:'+ add ink', ja:'＋墨を足す'}, delInk:{en:'− remove', ja:'－除く'}, wetness:{en:'wetness', ja:'湿り'}, bleedAmt:{en:'bleed', ja:'滲み'}, grainF:{en:'grain feathering', ja:'紙の毛羽'}, background:{en:'background', ja:'下地'}, renderOnly:{en:'· render only', ja:'· 表示のみ'}, substrate:{en:'substrate', ja:'地'}, water:{en:'水 water', ja:'水'}, paper:{en:'紙 paper', ja:'紙'}, overprint:{en:'overprint', ja:'重ね刷り'}, subtractive:{en:'subtractive', ja:'減法'}, additive:{en:'additive', ja:'加法'}, dotPitch:{en:'dot pitch', ja:'網点間隔'}, dotJitter:{en:'dot jitter', ja:'網点の揺らぎ'}, waterScreen:{en:'lay water screen 水 · repel', ja:'水の網を敷く · 反発'}, play:{en:'▶ play bleed', ja:'▶ 滲みを再生'}, pause:{en:'❚❚ pause', ja:'❚❚ 停止'}, vframes:{en:'video · frames', ja:'動画 · コマ'}, vsteps:{en:'video · steps / frame', ja:'動画 · コマ毎の歩'}, renderVideo:{en:'render bleed → .webm', ja:'滲みを書き出す → .webm'}, clearBath:{en:'clear bath', ja:'浴を流す'}, undo:{en:'↶ undo', ja:'↶ 戻す'}, pngBg:{en:'on background', ja:'下地つき'}, pngStamp:{en:'stamp the pull', ja:'摺りを捺す'}, pngClear:{en:'ink only', ja:'墨のみ'}, openUrumi:{en:'open .urumizuri', ja:'.urumizuri を開く'}, openBake:{en:'perform .bakezuri', ja:'.bakezuri を演じる'}, loadImg:{en:'load image', ja:'画像を読む'}, sepBtn:{en:'separate → bath', ja:'分解 → 浴'}, playing:{en:'playing', ja:'再生中'}, still:{en:'still', ja:'静止'}, nodes:{en:'nodes', ja:'節'}, marks:{en:'marks', ja:'点'}, sep:{en:'分解', ja:'分解'}, chainEmpty:{en:'— no passes yet · deposit, then play the bleed —', ja:'— まだ摺りなし · 置いてから滲みを再生 —'}, sepDone:{en:'separated into {n} inks @ pitch {p} — play the bleed to dissolve the screen', ja:'{n}色に分解 · 網点{p} — 滲みを再生して網を溶かす'}, noteSep:{en:'A picture, cut into your inks on the screen — palette + grid, the quantization — laid down wet so the bleed dissolves it back. Your inks are the basis; colours they can\'t mix don\'t survive.', ja:'画像を網の上であなたの墨へ裁つ — 色数＋格子、量子化だ — 濡れたまま置けば滲みが解いてゆく。墨が基底、混ぜられない色は残らない。'}, noteBleed:{en:'Step the bleed by hand, or play it. Time only moves here.', ja:'滲みを手で進めるか、再生する。時はここでだけ動く。'}, noteScreen:{en:'The screen strengthens automatically toward 装. A water screen lays the riso pattern as repulsion — set inks get pushed into the gaps.', ja:'網は装へ寄るほど強まる。水の網はリソの模様を反発として敷く — 定着した墨は隙間へ押し出される。'}, noteSave:{en:'Background is a viewing choice — not written into .urumizuri or .bakezuri. .bakezuri stores the whole process (passes + bleeds), seedless: every performance bleeds differently.', ja:'下地は見えかたの選択 — .urumizuri にも .bakezuri にも書かれない。.bakezuri は工程全体（摺りと滲み）を種なしで保つ。演じるたび滲みは異なる。'}
 };
 let lang = 'en';
 function t(key){ const e=I18N[key]; return e ? (e[lang]||e.en) : key; }
 function setLang(l){
-  lang=l;
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const k=el.getAttribute('data-i18n'); if(I18N[k]) el.innerHTML=I18N[k][lang]||I18N[k].en;
-  });
+  lang=l; document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(I18N[k]) el.innerHTML=I18N[k][lang]||I18N[k].en; });
   document.getElementById('langBtn').textContent = lang==='en' ? '日本語' : 'EN';
-  updateDisguiseRead(); rebuildChainUI(); updateTimeUI();
-  document.documentElement.lang = lang;
+  updateDisguiseRead(); rebuildChainUI(); updateTimeUI(); document.documentElement.lang = lang;
 }
 document.getElementById('langBtn').onclick=()=>setLang(lang==='en'?'ja':'en');
 
-// ── boot ────────────────────────────────────────────────────────────────────
-alloc(); refreshInkRGB(); paintPaperAll();
-buildTools(); syncInkEditor(); updateDisguiseRead();
-rebuildChainUI(); updateTimeUI(); setLang('en');
-frame();
+alloc(); refreshInkRGB(); paintPaperAll(); buildTools(); syncInkEditor(); updateDisguiseRead(); rebuildChainUI(); updateTimeUI(); setLang('en'); frame();
 </script>
 </body>
 </html>
