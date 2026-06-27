@@ -77,26 +77,14 @@ WebGL fluid sim would risk a black screen. (WebGL is on the roadmap for performa
 
 ## 3. The process chain (sequence-as-material)
 
-The bath accumulates a **chain** of committed nodes, shown as chips in the LCD process strip.
+- Pending is a single nullable `{type:'ink', deposits:[…]}` — never two parallel things. Bleeds are never pending; they're eager (a chunk commits immediately, play commits one node on stop).
+- Category-switch (ink↔bleed) auto-commits pending rather than discarding it — revert is cheap, a lost pending is forever.
+- **Undo** (fine-grained, at head): peels the last deposit by re-derivation (restore pass base, replay survivors), or pops the last node with nothing pending.
+- **Revert** (deliberate, while previewing): truncates the chain to the previewed node. Same button, relabeled by context.
+- **Preview** (clicking a historical chip): non-destructive — stashes the live head (incl. pending), shows the old snapshot, leaves chain and pending untouched. Selecting the head chip again restores the stash. Acting while previewing snaps back to head first, then acts.
+- Separation is now a replayable deposit (`{tool:'separate', sep, pitch}`) inside an ink pass, not a separate flag — this is what makes it composable with hand-marks in principle, though they still occupy the same single-category pending slot.
+- `MAX_SNAPS` is 64, parameterized, with the memory formula noted in the reducer header.
 
-- **Node kinds:** `pass` (`op:'marks'` or `op:'separate'`) and `bleed` (`steps`).
-- **Commit boundaries (implicit):** depositing a mark closes any open bleed (commits a bleed node);
-  running a bleed closes any open pass (commits a pass node). So "lay a layer, then another" emerges
-  from *changing activity* (mark → bleed → mark).
-- **Manual commit (Xyh's addition):** `manualCommitPass()` + **✓ commit pass** button
-  (`#commitPassBtn`) seal pending marks / a pending separation into a node *without* needing to bleed
-  first. Makes layering deliberate.
-- **Pending separation (Xyh's addition):** `separateImage()` now sets `pendingSeparation = true`
-  instead of auto-committing. The separation sits as a pending `分` chip until committed. Re-running
-  the separator while one is pending **rolls back** to the last snapshot first (so you can re-try a
-  separation experiment cleanly). If the new image matches current canvas size, the field is
-  **preserved and overlaid** (layer accumulation) rather than reset; `flushPending()` safe-flushes
-  prior actions first.
-- **Snapshots & undo:** each node stores an exact field snapshot (`MAX_SNAPS = 18` most recent).
-  `undo()` peels the last node and restores; `scrubTo(idx)` restores a chip's snapshot and truncates.
-  This gives **exact** undo despite the bleed being stochastic.
-- **The undo-vs-seedless resolution:** in-session snapshots = exact undo. The *saved recipe* is
-  seedless and re-performs differently. Two different jobs, kept separate.
 
 ---
 
@@ -104,7 +92,7 @@ The bath accumulates a **chain** of committed nodes, shown as chips in the LCD p
 
 There are now **four linked objects** in the Bakezuri ecology. Keep them distinct:
 
-* **`.bakezuri` (recipe, v2):** the ordered chain of passes + bleeds. **Seedless**: the format structurally cannot store an RNG seed, so performing it re-bleeds stochastically → a *sibling*, not a copy. Separation passes are flagged and skipped on replay because they need the source image. This is the process score.
+* **`.bakezuri` (recipe, v2):** the ordered chain of passes + bleeds. **Seedless**: the format structurally cannot store an RNG seed, so performing it re-bleeds stochastically → a *sibling*, not a copy. Separation passes are flagged and skipped on replay because they need the source image. This is the process score. `.bakezuri` saves **committed nodes only**; pending is never flushed on save. `.png` and `.urumizuri` capture the live field including any pending deposit. This divergence is intentional — "wet but unwritten" — and worth keeping as its own callout since it's the kind of thing a future you will rediscover and wonder if it's a bug.
 
 * **`.urumizuri` / `URMZ` (wet field goopCodec, v1):** the actual wet-state matrix, stored as a native binary file. Header: `URMZ`, width, height, ink count, version/reserved bytes. Body: uncompressed spatial cell records, each cell storing `fixField` plus one byte per active ink-load channel. This is no longer just a preservation format; it is a **vulnerable wet body**. It can be reopened in Bakezuri, or opened in the `urumizuri.html` terminal and damaged through byte edits, hex/text mutation, replacement, truncation, drift, flare, decay, and corruption. It is a goopCodec because it is decodable, editable as data, and performable again after mutation.
 
@@ -178,27 +166,24 @@ shared, frozen core.
 2. **Channel routing for separation.** Per-ink choice of what it renders from: brightness / R / G / B
    / **saturation** (vs the current auto-NNLS). "Which ink appears as what." Pairs with #1 (both
    per-ink properties). Moderate.
-3. **Fit-to-screen for wide images** (the unfinished overwrite). `separateImage()` still caps the
-   *long edge* only (`cap / Math.max(iw,ih)`), so wide panoramas get under-fit. Fix = cap **both**
-   axes: `sc = Math.min(1, capW/iw, capH/ih)` with e.g. `capW=520, capH=440`. Small, pending.
 
 **Mid-term:**
-4. **Harden the riso/separation core** (robustness pass before extraction).
-5. **Modularize → `bakezuri-core.js`.** Extract field sim + ink types + deposition + resolve + chain
+3. **Harden the riso/separation core** (robustness pass before extraction).
+4. **Modularize → `bakezuri-core.js`.** Extract field sim + ink types + deposition + resolve + chain
    into one module; image drag-drop + fit-to-screen + other utilities into small `script src` files.
    **Freeze them.** Both Bakezuri and the future drawing tool `script src` the same core.
-6. **Settings-only load door.** Pull inks + params from any `.bakezuri`/`.urumizuri` and apply to a
+5. **Settings-only load door.** Pull inks + params from any `.bakezuri`/`.urumizuri` and apply to a
    fresh bath, ignoring field/chain. Makes "extract a tuning from any file" real; clarifies the
    recipe / wet-matter / settings trio.
 
 **Later:**
-7. **Fork the suminagashi drawing tool.** *Same engine, different frontend* — separation removed,
+6. **Fork the suminagashi drawing tool.** *Same engine, different frontend* — separation removed,
    direct placement foregrounded; can start from a blank page. A "drawing layer between layers" is
    just a `pass` node where marks are placed by hand (the engine already does this). **Fork at the
    frontend, not the engine; the merge is automatic if the core is shared.**
-8. **Stacking prints.** Composite multiple pulls, each with its own alpha (builds on transparent PNG
+7. **Stacking prints.** Composite multiple pulls, each with its own alpha (builds on transparent PNG
    export).
-9. **WebGL port.** The per-frame field (diffusion + resolve + repulsion) is the hot loop and a
+8. **WebGL port.** The per-frame field (diffusion + resolve + repulsion) is the hot loop and a
    textbook ping-pong FBO; separation NNLS can stay CPU or move to a shader. Makes heavy
    chains-with-snapshots and video real-time.
 
@@ -238,13 +223,14 @@ shared, frozen core.
 -  Protect the header, expose the body. The first 16 bytes define the decoding frame. Damage tools should generally preserve the URMZ header unless the user is intentionally testing catastrophic invalidation. The body is the artistic damage surface.
 -  Tolerant decode is part of the poetics. Length changes, truncation, and misalignment should degrade into partial fields, shears, dry gaps, or channel faults when possible. A corrupted .urumizuri should not aspire to normal file safety; it should aspire to performable damage.
 -  Do not confuse image filters with wet-state damage. urumizuri.html does not filter pixels. It mutates the encoded wet field: fixation, spatial order, and ink-load channels.
+- The chain is now driven by a headless reducer (`bakezuri-chain.js`, mirrored inline in `index.html`, kept in sync manually until the `bakezuri-core.js` extraction). 24 transition tests + 9 host-glue integration tests, all passing.
+- Deposits are deterministic by construction (no per-call RNG anywhere in `applyDeposit`) — this is *why* mark-level undo-by-replay and separate-as-pending-deposit both work. If a future deposit type introduces randomness, this assumption breaks and needs revisiting.
 ---
 
 ## 10. Function map (where things live)
 
 - **Field / lifecycle:** `alloc`, `addInk`/`removeInk`, `snapshotField`/`restoreField`/`trimSnaps`/`lastSnap`.
-- **Chain:** `commitPass`, `commitBleed`, `addMark`, `bleedSteps`, `manualCommitPass`, `flushPending`,
-  `undo`, `scrubTo`, `rebuildChainUI`/`updatePending`/`updateTimeUI`. Globals: `chain`, `pendingMarks`,
+- **Chain:** `commitPass`/`commitBleed`/`scrubTo`/`trimSnaps`/`lastSnap`/`undo` → `dispatch`, `flushPending`, `addMark`, `bleedSteps`, `undoOrRevert`, `selectChip`, `resetChain`, backed by `BakezuriChain.{createInitialState,applyEvent,...}`.
   `pendingBleed`, `pendingSeparation`.
 - **Sim:** `step` (diffusion + grain feather + water repulsion + fix), `disguised` (the slider bundle).
 - **Deposition:** `depositInk` (conserved), `depositSurfactant` (impulse push), `depositWaterScreen`,
@@ -259,6 +245,8 @@ shared, frozen core.
 - **Tuning constants:** `NUM_INKS` (dynamic), `MAX_SNAPS=18`, `STOCK`, `bg`, separation `cap=440`/`ITER=26`.
 
 ---
+
+**Roadmap (§8) — mark #1 done**, with the caveat that `committedInkCount` is currently held together by a stopgap `inkLockBaseline` rather than the real ink-lifecycle model.
 
 *Stopping point: riso/marbling instrument is feature-complete enough to harden. Next concrete steps
 are §8 items 1–3, then modularize (§8.5) before forking the suminagashi tool (§8.7).*

@@ -79,6 +79,10 @@
   --f-pixel:   "DotGothic16","IBM Plex Mono",monospace;
   --f-disp: var(--f-disp-jp);
   --f-ui:   var(--f-ui-en);
+    --blood:      #8e1118;
+  --blood-hot:  #b80d12;
+  --blood-deep: #420000;
+  --blood-glow: rgba(184,13,18,.34);
 }
 
 *{ box-sizing:border-box; margin:0; padding:0; }
@@ -115,6 +119,19 @@ body::before{
 @keyframes sheen{ from{ transform:translate(-1%,-1%); } to{ transform:translate(2%,1.5%); } }
 @media (prefers-reduced-motion:reduce){ body::before{ animation:none; } }
 
+
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("bakezuri2.png");
+  background-size: auto;
+  /* Shifting 50px from the left, keeping top alignment */
+  background-position: 50px top; 
+  background-repeat: no-repeat;
+  opacity: 0.25; 
+}
 header{ width:100%; max-width:1080px; margin-bottom:1.1rem; }
 .suite-line{ display:flex; align-items:center; gap:.55rem; flex-wrap:wrap; font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; color:var(--silt); margin-bottom:.7rem; }
 .suite-line a{ color:var(--jade); text-decoration:none; border-bottom:1px solid transparent; }
@@ -167,6 +184,9 @@ header{ width:100%; max-width:1080px; margin-bottom:1.1rem; }
 .chip.pass{ border-left:2px solid var(--iris); }
 .chip.bleed{ border-left:2px solid var(--jade); font-size:.66rem; color:var(--jade); }
 .chip.pend{ border-style:dashed; opacity:.9; animation:pulse 1.4s ease-in-out infinite; cursor:default; }
+.chip.sel{ border-color:var(--moon); box-shadow:0 0 0 1px var(--moon), 0 0 8px rgba(220,235,255,.25); transform:translateY(-1px); }
+.chip.dead{ opacity:.32; cursor:not-allowed; filter:grayscale(.5); }
+.chip.dead:hover{ border-color:var(--bath-lift); transform:none; }
 @keyframes pulse{ 50%{ opacity:.45; } }
 .cdot{ width:11px; height:11px; border-radius:50% 50% 48% 52%; border:1px solid rgba(0,0,0,.3); display:inline-grid; place-items:center; font-size:.5rem; color:#fff; }
 .cdot.sep{ background:var(--gold); color:#1a1206; }
@@ -179,10 +199,10 @@ header{ width:100%; max-width:1080px; margin-bottom:1.1rem; }
 .console::-webkit-scrollbar-track { background: var(--bath-deep); border-radius: 3px; }
 .console::-webkit-scrollbar-thumb { background: var(--iris); border-radius: 3px; }
 
-.organ{ background:linear-gradient(160deg, var(--bath-panel), var(--bath-deep)); border:1px solid var(--bath-rim); border-radius:14px 14px 16px 12px; padding:.9rem .95rem 1rem; position:relative; }
+.organ{ background:linear-gradient(160deg, var(--bath-panel), var(--bath-deep)); border:1px solid var(--bath-rim); border-radius:14px 14px 16px 12px; padding:.9rem .95rem 1rem; position:relative; border-color:rgba(142,17,24,.26); }
 .organ > h2{ font-size:.6rem; font-weight:700; letter-spacing:.24em; text-transform:uppercase; color:var(--silt); display:flex; align-items:center; gap:.5rem; margin-bottom:.7rem; }
 .organ > h2 .jp{ font-family:var(--f-disp); font-size:.92rem; color:var(--moon); letter-spacing:.06em; }
-.organ > h2 .dot{ width:6px; height:6px; border-radius:50%; background:var(--iris); box-shadow:0 0 8px var(--iris-glow); }
+.organ > h2 .dot{ width:6px; height:6px; border-radius:50%; background:var(--blood); box-shadow:0 0 8px var(--blood-glow); }
 
 .disguise h2 .dot{ background:var(--riso); box-shadow:0 0 8px var(--riso-glow); }
 .disguise-track{ position:relative; padding:.2rem 0 .1rem; }
@@ -202,6 +222,12 @@ input[type=range]::-moz-range-thumb{ width:20px; height:20px; border-radius:50%;
 .well{ position:relative; width:46px; height:46px; border-radius:50% 50% 48% 52%; border:1px solid var(--bath-lift); cursor:pointer; box-shadow:inset 0 -6px 12px rgba(0,0,0,.35), inset 0 4px 8px rgba(255,255,255,.12); transition:transform .12s ease; display:grid; place-items:center; }
 .well:hover{ transform:translateY(-2px) scale(1.04); }
 .well.sel{ outline:2px solid var(--moon); outline-offset:2px; }
+.well.committed{ filter:saturate(.55) brightness(.7); border-style:dashed; }
+.well.committed:hover{ filter:saturate(.85) brightness(.9); transform:translateY(-2px) scale(1.04); }
+.well.committed .lockmark{ position:absolute; top:-3px; right:-3px; font-size:.5rem; opacity:.8; }
+.well.committed .reloadmark{ position:absolute; inset:0; display:grid; place-items:center; font-size:1.1rem; color:var(--moon); opacity:0; transition:.12s; }
+.well.committed:hover .reloadmark{ opacity:.95; }
+.well.committed:hover .ico, .well.committed:hover .lockmark{ opacity:.2; }
 .well .ico{ font-family:var(--f-disp); font-size:.85rem; color:#0008; mix-blend-mode:overlay; }
 .well.surf{ background:repeating-conic-gradient(from 0deg, rgba(255,255,255,.16) 0 8%, transparent 8% 16%), var(--bath-rim); }
 .well.surf .ico{ color:var(--moon); mix-blend-mode:normal; font-size:1.1rem; }
@@ -292,6 +318,11 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
 .hanko:active{ transform:translateY(2px) scale(.95); box-shadow:inset 0 3px 8px rgba(0,0,0,.5); }
 
 #playBtn{ box-shadow:inset 0 1px 0 var(--bezel), 0 1px 2px var(--bezel-d); }
+.romaji b .blood{
+  color: var(--blood-hot);
+  text-shadow: 0 0 10px var(--blood-glow);
+}
+
 </style>
 </head>
 <body>
@@ -305,7 +336,7 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
   </div>
   <div class="title-row">
     <span class="kanji">化け摺り</span>
-    <span class="romaji" data-i18n="tagline"><b>bakezuri</b> — 1M dips of a brush</span>
+  <span class="romaji" data-i18n="tagline"><b><span class="blood">bake</span>zuri</b> — 1M dips of a brush</span>
   </div>
   <p class="gloss" data-i18n="gloss">Float ink on a wet bath; it bleeds, mixes, and never quite dries. Slide toward
     <em>装</em> and the same engine holds still — fixes, flattens, and prints itself in halftone dots.
@@ -394,6 +425,7 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
         <div class="row" style="gap:.4rem">
           <button class="act" id="addInkBtn" data-i18n="addInk" style="flex:1;font-size:.72rem;padding:.35rem">+ add ink</button>
           <button class="act" id="delInkBtn" data-i18n="delInk" style="flex:1;font-size:.72rem;padding:.35rem">− remove</button>
+          <button class="act" id="clearInkBtn" data-i18n="clearInks" style="flex:1;font-size:.72rem;padding:.35rem">⊘ clear</button>
         </div>
       </div>
     </div>
@@ -525,20 +557,45 @@ function alloc(){
 }
 
 const INK_KANJI = ['藍','桃','虹','痣','苔','霧','燐','錆'];
-function addInk(){
-  if(inks.length>=8) return;
+const CONSOLE_CAP = 8;                    // max ARMED (mutable) inks at once; committed history is uncapped
+function consoleCount(){ return inks.length - committedInkCount; }
+function spawnInk(seed){
   const idx=inks.length;
-  inks.push({ name:'ink'+(idx+1), kanji:INK_KANJI[idx%INK_KANJI.length],
-              type:'shift', targetChannel:'brightness', color:'#3fb0c8', color2:'#e9c24a' });
+  inks.push(Object.assign({ name:'ink'+(idx+1), kanji:INK_KANJI[idx%INK_KANJI.length],
+              type:'shift', targetChannel:'brightness', color:'#3fb0c8', color2:'#e9c24a' }, seed||{}));
+  // a fresh slot is always a new wet channel — never re-points an existing one
+  delete inks[idx].pass; delete inks[idx].committed;
   loadA.push(new Float32Array(W*H)); loadB.push(new Float32Array(W*H));
-  NUM_INKS=inks.length; P.selInk=idx; P.tool='ink';
-  refreshInkRGB(); buildTools(); syncInkEditor();
+  NUM_INKS=inks.length; refreshInkRGB();
+  return idx;
+}
+function addInk(){
+  if(consoleCount()>=CONSOLE_CAP) return;
+  P.selInk=spawnInk(); P.tool='ink';
+  buildTools(); syncInkEditor();
+}
+function reloadInk(committedIdx){           // clone a locked drum's recipe into a new armed slot
+  if(consoleCount()>=CONSOLE_CAP) return;
+  const src=inks[committedIdx];
+  P.selInk=spawnInk({ name:src.name, kanji:src.kanji, type:src.type, targetChannel:src.targetChannel, color:src.color, color2:src.color2 });
+  P.tool='ink';
+  buildTools(); syncInkEditor();
+}
+function clearInks(){                        // deselect-all: drop every armed (mutable) ink
+  inks.length = committedInkCount;
+  loadA.length = committedInkCount; loadB.length = committedInkCount;
+  NUM_INKS = inks.length;
+  if(inks.length===0) spawnInk();           // never leave zero channels
+  P.selInk = committedInkCount < inks.length ? committedInkCount : -1;
+  refreshInkRGB(); buildTools(); syncInkEditor(); if(active) resolve();
 }
 function removeInk(idx){
-  if(inks.length<=1) return;
+  if(idx < committedInkCount) return;        // committed drums are locked
+  if(consoleCount()<=1) return;              // keep at least one armed ink
   inks.splice(idx,1); loadA.splice(idx,1); loadB.splice(idx,1);
   NUM_INKS=inks.length;
   if(P.selInk>=NUM_INKS) P.selInk=NUM_INKS-1;
+  if(P.selInk<committedInkCount) P.selInk=committedInkCount;
   refreshInkRGB(); buildTools(); syncInkEditor();
   if(active) resolve();
 }
@@ -567,13 +624,77 @@ function disguised(){
   };
 }
 
-let chain = [];
+/* ── inlined chain reducer (mirror of bakezuri-chain.js — keep in sync) ──── */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.BakezuriChain = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+  var DEFAULT_MAX_SNAPS = 64;            // snap ring depth (~(1+NUM_INKS)·W·H·4 B each)
+  function createInitialState(){ return { chain:[], pending:null, previewIdx:null, previewReturn:null, maxSnaps:DEFAULT_MAX_SNAPS }; }
+  function headIndex(s){ return s.chain.length - 1; }
+  function isPreviewing(s){ return s.previewIdx !== null; }
+  function lastSnap(s){ return s.chain.length ? s.chain[s.chain.length-1].snap : null; }
+  function canPreview(s, idx){ return idx>=0 && idx<s.chain.length && idx!==headIndex(s) && s.chain[idx].snap!=null; }
+  function buttonLabel(s){ return isPreviewing(s) ? 'revert' : 'undo'; }
+  function trim(s){ var cut=s.chain.length-s.maxSnaps; for(var i=0;i<cut;i++) s.chain[i].snap=null; }
+  function exitPreviewToHead(s, field){ if(!isPreviewing(s)) return; field.restore(s.previewReturn); s.previewIdx=null; s.previewReturn=null; }
+  function applyEvent(s, ev, field){
+    switch(ev.t){
+      case 'deposit': {
+        exitPreviewToHead(s, field);
+        if(!s.pending) s.pending={type:'ink', deposits:[]};
+        s.pending.deposits.push(ev.ev); field.applyDeposit(ev.ev); field.resolve();
+        return s;
+      }
+      case 'flushPending': {
+        exitPreviewToHead(s, field);
+        if(s.pending){ var snap=field.snapshot(); s.chain.push({kind:'ink', deposits:s.pending.deposits, snap:snap}); s.pending=null; trim(s); field.resolve(); }
+        return s;
+      }
+      case 'commitBleed': {
+        if(s.pending) throw new Error('commitBleed with pending open — flushPending first');
+        if(isPreviewing(s)) exitPreviewToHead(s, field);
+        var bsnap=field.snapshot(); s.chain.push({kind:'bleed', steps:ev.n, snap:bsnap}); trim(s); field.resolve();
+        return s;
+      }
+      case 'undo': {
+        if(isPreviewing(s)) return s;
+        if(s.pending && s.pending.deposits.length){
+          s.pending.deposits.pop(); field.restore(lastSnap(s));
+          for(var i=0;i<s.pending.deposits.length;i++) field.applyDeposit(s.pending.deposits[i]);
+          if(s.pending.deposits.length===0) s.pending=null; field.resolve();
+        } else if(s.chain.length){ s.chain.pop(); field.restore(lastSnap(s)); field.resolve(); }
+        return s;
+      }
+      case 'revert': {
+        if(!isPreviewing(s)) return s;
+        var idx=s.previewIdx; s.chain=s.chain.slice(0, idx+1); field.restore(s.chain[idx].snap);
+        s.pending=null; s.previewIdx=null; s.previewReturn=null; field.resolve();
+        return s;
+      }
+      case 'selectChip': {
+        var i2=ev.idx;
+        if(i2===headIndex(s)){ if(isPreviewing(s)){ exitPreviewToHead(s, field); field.resolve(); } return s; }
+        if(!canPreview(s, i2)) return s;
+        if(!isPreviewing(s)) s.previewReturn=field.snapshot();
+        s.previewIdx=i2; field.restore(s.chain[i2].snap); field.resolve();
+        return s;
+      }
+      default: return s;
+    }
+  }
+  return { createInitialState:createInitialState, applyEvent:applyEvent, headIndex:headIndex, isPreviewing:isPreviewing, canPreview:canPreview, buttonLabel:buttonLabel, lastSnap:lastSnap, DEFAULT_MAX_SNAPS:DEFAULT_MAX_SNAPS };
+});
+
+/* ── process chain (host glue over the reducer) ─────────────────────────── */
+const Chain = window.BakezuriChain;
+let chainState = Chain.createInitialState();
+let chain = chainState.chain;            // legacy alias; refreshed every dispatch
 let committedInkCount = 0;
-let pendingMarks = [];
-let pendingBleed = 0;
-let pendingSeparation = false;
+let inkLockBaseline = 0;                  // inks locked independent of chain (a loaded .urumizuri)
 let loadsTotal = 0;
-const MAX_SNAPS = 18;
+let playSteps = 0;                        // steps accumulated during a play run
 
 function snapshotField(){
   return { load: loadA.map(a=>Float32Array.from(a)), fix:Float32Array.from(fixField), n:NUM_INKS };
@@ -589,58 +710,64 @@ function restoreField(s){
   }
   active={x0:0,y0:0,x1:W-1,y1:H-1};
 }
-function trimSnaps(){ for(let i=0;i<chain.length-MAX_SNAPS;i++) chain[i].snap=null; }
-function lastSnap(){ for(let i=chain.length-1;i>=0;i--) if(chain[i].snap) return chain[i].snap; return null; }
 
-function commitPass(op){
-  if(!pendingMarks.length && op!=='separate' && !pendingSeparation) return;
-  chain.push({ kind:'pass', op:op || (pendingSeparation ? 'separate' : 'marks'), deposits:pendingMarks.slice(),
-               settings:{ pitch:P.pitch, mixing:P.mixing }, snap:snapshotField() });
-  pendingMarks=[]; pendingSeparation = false; trimSnaps(); 
-  committedInkCount = inks.length;
-  rebuildChainUI();
-  buildTools();
+// the reducer drives the bath through this interface
+const fieldIO = { snapshot:snapshotField, restore:restoreField, applyDeposit:applyDeposit, resolve:resolve };
+
+// committed-ink watermark follows the chain head's lockCount (carried forward by bleeds),
+// not snap.n — a bleed must NOT lock freshly-armed inks. ink commits advance it (commit-on-print).
+function headLockCount(){
+  for(let i=chainState.chain.length-1;i>=0;i--){ if(chainState.chain[i].lockCount!=null) return chainState.chain[i].lockCount; }
+  return 0;
 }
-function commitBleed(){
-  if(pendingBleed<=0) return;
-  chain.push({ kind:'bleed', steps:pendingBleed, snap:snapshotField() });
-  pendingBleed=0; trimSnaps(); rebuildChainUI();
+function syncCommittedCount(){ committedInkCount = Math.max(inkLockBaseline, headLockCount()); }
+function dispatch(ev){
+  const prev = committedInkCount;
+  Chain.applyEvent(chainState, ev, fieldIO);
+  chain = chainState.chain;               // refresh alias (revert reassigns the array)
+  syncCommittedCount();
+  rebuildChainUI();
+  if(committedInkCount !== prev) buildTools();  // re-render wells when the lock line moves (e.g. undo)
 }
 
-function addMark(ev){
-  if(pendingBleed>0) commitBleed();
-  pendingMarks.push(ev); 
-  applyDeposit(ev); 
-  resolve(); 
-  rebuildChainUI();
+// ink commit = a print run: lock the whole armed console to this node, advancing the watermark.
+// the console then sits empty ("between runs") until inks are re-armed (add / reload).
+function flushPending(){
+  const prevC = committedInkCount;
+  const before = chainState.chain.length;
+  dispatch({t:'flushPending'});
+  const after = chainState.chain.length;
+  if(after>before){
+    const node = chainState.chain[after-1];        // the new ink node
+    if(node.kind==='ink'){
+      node.settings = node.settings || { pitch:P.pitch, mixing:P.mixing };
+      for(let i=prevC;i<inks.length;i++) inks[i].pass = after-1;   // tag drums with their run (node-popup)
+      committedInkCount = inks.length;
+      node.lockCount = committedInkCount;
+      syncCommittedCount(); rebuildChainUI(); buildTools();
+    }
+  }
 }
+// bleed carries the lock count forward (a bleed prints nothing, locks nothing)
+function commitBleedNode(n){
+  dispatch({t:'commitBleed', n});
+  const node = chainState.chain[chainState.chain.length-1];
+  if(node && node.kind==='bleed') node.lockCount = committedInkCount;
+}
+
+function addMark(ev){ dispatch({t:'deposit', ev}); }
 function bleedSteps(n){
-  if(pendingMarks.length) commitPass();
+  if(running) return;
+  flushPending();                         // ink → bleed boundary commits pending
   for(let i=0;i<n;i++) step();
-  pendingBleed+=n; resolve(); rebuildChainUI();
+  commitBleedNode(n);
 }
-function flushPending(){ commitPass(); commitBleed(); }
-
-function undo(){
+function undoOrRevert(){
   if(running) pause();
-  if(pendingMarks.length || pendingBleed>0){ pendingMarks=[]; pendingBleed=0; restoreField(lastSnap()); }
-  else if(chain.length){ chain.pop(); restoreField(lastSnap()); }
-  committedInkCount = chain.length > 0 ? chain[chain.length - 1].snap.n : 0;
-  resolve(); rebuildChainUI();
-  pendingSeparation = false;
-  buildTools();
+  dispatch({ t: Chain.isPreviewing(chainState) ? 'revert' : 'undo' });
 }
-function scrubTo(idx){
-  if(running) pause();
-  pendingMarks=[]; pendingBleed=0;
-  if(idx<0){ chain=[]; restoreField(null); }
-  else if(chain[idx] && chain[idx].snap){ restoreField(chain[idx].snap); chain=chain.slice(0,idx+1); }
-  else return;
-  committedInkCount = chain.length > 0 ? chain[chain.length - 1].snap.n : 0;
-  resolve(); rebuildChainUI();
-  pendingSeparation = false;
-  buildTools();
-}
+function selectChip(idx){ if(running) pause(); dispatch({t:'selectChip', idx}); }
+function resetChain(){ chainState = Chain.createInitialState(); chain = chainState.chain; inkLockBaseline = 0; syncCommittedCount(); }
 
 function markActive(cx,cy,r){
   const x0=Math.max(0,cx-r-2), y0=Math.max(0,cy-r-2);
@@ -726,6 +853,7 @@ function depositWaterScreen(pitch){
 function applyDeposit(ev){
   if(ev.tool==='surfactant') depositSurfactant(ev.x,ev.y,ev.r);
   else if(ev.tool==='waterscreen') depositWaterScreen(ev.pitch);
+  else if(ev.tool==='separate') halftoneDeposit(ev.sep);
   else { depositInk(ev.ink, ev.x, ev.y, ev.r, ev.amount); loadsTotal++; }
 }
 
@@ -908,11 +1036,11 @@ function paintPaperAll(){
 
 let running=false, raf=null;
 function frame(){
-  if(running){ step(); pendingBleed++; resolve(); updatePending(); }
+  if(running){ step(); playSteps++; resolve(); updatePending(); }
   raf=requestAnimationFrame(frame);
 }
-function play(){ if(running) return; if(pendingMarks.length) commitPass(); running=true; updateTimeUI(); }
-function pause(){ if(!running) return; running=false; commitBleed(); updateTimeUI(); }
+function play(){ if(running) return; flushPending(); playSteps=0; running=true; updateTimeUI(); }
+function pause(){ if(!running) return; running=false; if(playSteps>0) commitBleedNode(playSteps); playSteps=0; updateTimeUI(); }
 
 function canvasXY(e){
   const r=tank.getBoundingClientRect();
@@ -923,8 +1051,9 @@ function canvasXY(e){
 let drawing=false, lastT=0;
 function depoAt(x,y){
   const r = P.tool==='surfactant' ? 14 : 9;
-  if(P.tool==='surfactant') addMark({tool:'surfactant', ink:-1, x, y, r, amount:0});
-  else addMark({tool:'ink', ink:P.selInk, x, y, r, amount:1.7});
+  if(P.tool==='surfactant'){ addMark({tool:'surfactant', ink:-1, x, y, r, amount:0}); return; }
+  if(P.selInk < committedInkCount || P.selInk >= inks.length) return;  // no armed ink — arm one first
+  addMark({tool:'ink', ink:P.selInk, x, y, r, amount:1.7});
 }
 tank.addEventListener('pointerdown', e=>{
   if(running) return;
@@ -948,15 +1077,25 @@ function inkSwatch(k){
 }
 function buildTools(){
   const host=document.getElementById('tools'); host.innerHTML='';
+  // locked committed drums — read-only, click to reload the recipe into a fresh armed slot
+  inks.forEach((k,idx)=>{
+    if(idx >= committedInkCount) return;
+    const w=document.createElement('div'); w.className='well committed';
+    w.style.background = inkSwatch(k);
+    w.innerHTML='<span class="ico">'+k.kanji+'</span><span class="lockmark">🔒</span><span class="reloadmark">⟳</span>';
+    w.title=k.name+' · '+k.type+' · locked (run '+(k.pass!=null?k.pass:'—')+') — click to reload';
+    w.onclick=()=>{ if(consoleCount()<CONSOLE_CAP) reloadInk(idx); };
+    host.appendChild(w);
+  });
+  // armed mutable inks — all of these print
   let firstUncommitted = -1;
   inks.forEach((k,idx)=>{
     if(idx < committedInkCount) return;
     if(firstUncommitted === -1) firstUncommitted = idx;
-    
     const w=document.createElement('div'); w.className='well'+(P.tool==='ink'&&P.selInk===idx?' sel':'');
     w.style.background = inkSwatch(k);
     w.innerHTML='<span class="ico">'+k.kanji+'</span>';
-    w.title=k.name+' · '+k.type+' · target:'+k.targetChannel;
+    w.title=k.name+' · '+k.type+' · target:'+k.targetChannel+' · armed';
     w.onclick=()=>{ P.tool='ink'; P.selInk=idx; syncInkEditor(); buildTools(); };
     host.appendChild(w);
   });
@@ -964,12 +1103,13 @@ function buildTools(){
   s.innerHTML='<span class="ico">水</span>'; s.title='surfactant — pushes ink outward (suminagashi)';
   s.onclick=()=>{ P.tool='surfactant'; buildTools(); };
   host.appendChild(s);
-  
+
   if(P.tool==='ink' && (P.selInk < committedInkCount || P.selInk >= inks.length)) {
-    P.selInk = firstUncommitted;
+    P.selInk = firstUncommitted;   // -1 when the console is empty (between runs)
   }
   syncInkEditor();
-  const cnt=document.getElementById('inkCount'); if(cnt) cnt.textContent=inks.length+'/8';
+  const cnt=document.getElementById('inkCount');
+  if(cnt) cnt.textContent = consoleCount()+'/'+CONSOLE_CAP + (committedInkCount?' · '+committedInkCount+'🔒':'');
 }
 function syncInkEditor(){
   if (P.selInk === -1 || P.selInk < committedInkCount || P.selInk >= inks.length) {
@@ -977,7 +1117,7 @@ function syncInkEditor(){
     document.getElementById('inkTarget').disabled = true;
     document.getElementById('inkColor').disabled = true;
     document.getElementById('inkColor2').disabled = true;
-    document.getElementById('addInkBtn').disabled = inks.length >= 8;
+    document.getElementById('addInkBtn').disabled = consoleCount() >= CONSOLE_CAP;
     document.getElementById('delInkBtn').disabled = true;
     return;
   }
@@ -985,8 +1125,8 @@ function syncInkEditor(){
   document.getElementById('inkTarget').disabled = false;
   document.getElementById('inkColor').disabled = false;
   document.getElementById('inkColor2').disabled = false;
-  document.getElementById('addInkBtn').disabled = inks.length >= 8;
-  document.getElementById('delInkBtn').disabled = false;
+  document.getElementById('addInkBtn').disabled = consoleCount() >= CONSOLE_CAP;
+  document.getElementById('delInkBtn').disabled = consoleCount() <= 1;
 
   const k=inks[P.selInk];
   document.getElementById('inkType').value=k.type;
@@ -999,34 +1139,13 @@ function syncInkEditor(){
 }
 
 function modifyInkProperty(prop, val) {
-  let isChannelUsed = chain.some(node => {
-    if (node.snap && node.snap.load && node.snap.load[P.selInk]) {
-      return node.snap.load[P.selInk].some(v => v > 0.001);
-    }
-    return false;
-  });
-
-  if (isChannelUsed && inks.length < 8) {
-    const newIdx = inks.length;
-    const duplicatedInk = Object.assign({}, inks[P.selInk], {
-      [prop]: val,
-      name: 'ink' + (newIdx + 1),
-      kanji: INK_KANJI[newIdx % INK_KANJI.length]
-    });
-    
-    inks.push(duplicatedInk);
-    loadA.push(new Float32Array(W * H));
-    loadB.push(new Float32Array(W * H));
-    NUM_INKS = inks.length;
-    P.selInk = newIdx;
-    P.tool = 'ink';
-  } else {
-    inks[P.selInk][prop] = val;
-  }
-  
-  refreshInkRGB(); 
-  syncInkEditor(); 
-  buildTools(); 
+  // committed drums are locked and never selectable here, so the selected ink is always
+  // mutable and its channel carries only this-pass (uncommitted) load — edit in place.
+  if (P.selInk < committedInkCount || P.selInk >= inks.length) return;
+  inks[P.selInk][prop] = val;
+  refreshInkRGB();
+  syncInkEditor();
+  buildTools();
   if (active && !running) resolve();
 }
 
@@ -1036,6 +1155,7 @@ document.getElementById('inkColor').oninput = e => { modifyInkProperty('color', 
 document.getElementById('inkColor2').oninput = e => { modifyInkProperty('color2', e.target.value); };
 document.getElementById('addInkBtn').onclick=addInk;
 document.getElementById('delInkBtn').onclick=()=>removeInk(P.selInk);
+document.getElementById('clearInkBtn').onclick=clearInks;
 
 document.getElementById('bgColor').oninput=e=>{
   bg=hexToRGB(e.target.value); paintPaperAll(); if(active) resolve();
@@ -1126,29 +1246,38 @@ const pendingChip=document.getElementById('pendingChip');
 const timeState=document.getElementById('timeState');
 
 function nodeChip(n,idx){
-  if(n.kind==='bleed') return '<button class="chip bleed" data-idx="'+idx+'" title="'+n.steps+' bleed steps">≈'+n.steps+'</button>';
+  const sel = chainState.previewIdx===idx ? ' sel' : '';
+  const dead = !Chain.canPreview(chainState, idx) && idx!==Chain.headIndex(chainState) ? ' dead' : '';
+  if(n.kind==='bleed') return '<button class="chip bleed'+sel+dead+'" data-idx="'+idx+'" title="'+n.steps+' bleed steps">≈'+n.steps+'</button>';
+  const isSep = n.deposits.some(d=>d.tool==='separate');
   const used=[...new Set(n.deposits.map(d=>d.ink).filter(i=>i>=0))];
   let dots = used.slice(0,5).map(i=>'<span class="cdot" style="background:'+inkSwatch(inks[i]||{type:'flat',color:'#777'})+'"></span>').join('');
-  if(n.op==='separate') dots='<span class="cdot sep">分</span>';
+  if(isSep) dots='<span class="cdot sep">分</span>';
   else if(n.deposits.some(d=>d.tool==='waterscreen')) dots+='<span class="cdot" style="background:repeating-radial-gradient(circle,#bfe9ff66 0 1px,transparent 1px 3px),#163a44"></span>';
   if(!dots) dots='<span class="cdot"></span>';
-  const tag = n.op==='separate' ? t('sep') : (n.settings ? n.settings.pitch+'·'+(n.settings.mixing==='additive'?'+':'–') : '');
-  return '<button class="chip pass" data-idx="'+idx+'" title="'+(n.op||'marks')+'">'+dots+'<span class="ctag">'+tag+'</span></button>';
+  const tag = isSep ? t('sep') : (n.settings ? n.settings.pitch+'·'+(n.settings.mixing==='additive'?'+':'–') : '');
+  return '<button class="chip pass'+sel+dead+'" data-idx="'+idx+'" title="'+(isSep?'separate':'marks')+'">'+dots+'<span class="ctag">'+tag+'</span></button>';
 }
 function rebuildChainUI(){
-  chainNodes.innerHTML = chain.map((n,i)=>nodeChip(n,i)).join('') || '<span class="chain-empty" data-i18n="chainEmpty">'+t('chainEmpty')+'</span>';
-  chainNodes.querySelectorAll('.chip').forEach(c=>c.onclick=()=>scrubTo(+c.dataset.idx));
+  chainNodes.innerHTML = chainState.chain.map((n,i)=>nodeChip(n,i)).join('') || '<span class="chain-empty" data-i18n="chainEmpty">'+t('chainEmpty')+'</span>';
+  chainNodes.querySelectorAll('.chip').forEach(c=>c.onclick=()=>selectChip(+c.dataset.idx));
   updatePending();
   const cnt=document.getElementById('depoCount');
-  if(cnt) cnt.textContent = t('nodes').toUpperCase()+' '+chain.length;
+  if(cnt) cnt.textContent = t('nodes').toUpperCase()+' '+chainState.chain.length;
+  const ub=document.getElementById('undoBtn');
+  if(ub) ub.textContent = Chain.isPreviewing(chainState)
+    ? ((typeof lang!=='undefined'&&lang==='ja') ? '⤳ 戻す' : '⤳ revert')
+    : t('undo');
 }
 function updatePending(){
   let s='';
-  if(pendingSeparation) {
-    s='<span class="chip pass pend"><span class="cdot sep">分</span><span class="ctag">' + t('sep') + '</span></span>';
+  const p = chainState.pending;
+  if(running){ s='<span class="chip bleed pend">≈'+playSteps+'…</span>'; }
+  else if(p && p.deposits.length){
+    const isSep = p.deposits.some(d=>d.tool==='separate');
+    if(isSep) s='<span class="chip pass pend"><span class="cdot sep">分</span><span class="ctag">'+t('sep')+'</span></span>';
+    else s='<span class="chip pass pend">+'+p.deposits.length+' '+t('marks')+'</span>';
   }
-  else if(pendingMarks.length) s='<span class="chip pass pend">+'+pendingMarks.length+' '+t('marks')+'</span>';
-  else if(pendingBleed>0) s='<span class="chip bleed pend">≈'+pendingBleed+(running?'…':'')+'</span>';
   pendingChip.innerHTML=s;
 }
 function updateTimeUI(){
@@ -1158,12 +1287,11 @@ function updateTimeUI(){
 
 const playBtn=document.getElementById('playBtn');
 playBtn.onclick=()=>{ if(running) pause(); else play(); };
-document.getElementById('undoBtn').onclick=undo;
+document.getElementById('undoBtn').onclick=undoOrRevert;
 
 document.getElementById('resetBtn').onclick=()=>{
   running=false; alloc(); paintPaperAll();
-  chain=[]; pendingMarks=[]; pendingBleed=0; loadsTotal=0;
-  committedInkCount = 0;
+  resetChain(); loadsTotal=0;
   rebuildChainUI(); updateTimeUI();
   buildTools();
 };
@@ -1185,15 +1313,16 @@ document.getElementById('savePngBg').onclick   =()=>exportPNG(false);
 document.getElementById('savePngClear').onclick=()=>exportPNG(true);
 
 document.getElementById('saveBake').onclick=()=>{
-  flushPending();
   const doc={
     format:'bakezuri-score', version:2,
     width:W, height:H,
     inks:inks.map(k=>({name:k.name,kanji:k.kanji,type:k.type,targetChannel:k.targetChannel,color:k.color,color2:k.color2})),
     params:{ disguise:P.disguise, wetness:P.wetness, bleed:P.bleed, grain:P.grain, substrate:P.substrate },
-    chain: chain.map(n => n.kind==='bleed'
+    chain: chainState.chain.map(n => n.kind==='bleed'
       ? { kind:'bleed', steps:n.steps }
-      : { kind:'pass', op:n.op, deposits:n.op==='separate'?[]:n.deposits, settings:n.settings })
+      : { kind:'ink',
+          deposits: n.deposits.filter(d=>d.tool!=='separate'),  // separations need the image; skipped on replay
+          settings: n.settings || {pitch:P.pitch, mixing:P.mixing} })
   };
   download(new Blob([JSON.stringify(doc)],{type:'application/json'}), 'recipe-'+Date.now()+'.bakezuri');
 };
@@ -1218,17 +1347,17 @@ function loadParamsAndInks(doc){
 }
 
 function replayChain(nodes){
-  chain=[]; pendingMarks=[]; pendingBleed=0; loadsTotal=0; running=false;
+  resetChain(); loadsTotal=0; running=false;
   (nodes||[]).forEach(node=>{
     if(node.kind==='bleed'){
+      flushPending();
       for(let i=0; i<node.steps; i++) step();
-      pendingBleed+=node.steps; commitBleed();
+      commitBleedNode(node.steps);
     } else {
-      if(node.op==='separate') return;
       if(node.settings){ if(node.settings.pitch!=null)P.pitch=node.settings.pitch;
                          if(node.settings.mixing)P.mixing=node.settings.mixing; }
-      (node.deposits||[]).forEach(ev=>{ pendingMarks.push(ev); applyDeposit(ev); });
-      commitPass();
+      (node.deposits||[]).forEach(ev=>{ if(ev.tool!=='separate') dispatch({t:'deposit', ev}); });
+      flushPending();   // commit the ink pass (no-op if it held only a separate)
     }
   });
   syncUIFromP(); resolve(); rebuildChainUI(); updateTimeUI();
@@ -1294,8 +1423,8 @@ document.getElementById('openUrumi').onchange = e => {
         }
       }
       active = { x0: 0, y0: 0, x1: W - 1, y1: H - 1 };
-      chain = []; pendingMarks = []; pendingBleed = 0; loadsTotal = 0; running = false;
-      committedInkCount = inks.length;
+      resetChain(); loadsTotal = 0; running = false;
+      inkLockBaseline = inks.length; syncCommittedCount();   // loaded matter locks its inks (no chain to undo)
       rebuildChainUI(); updateTimeUI(); resolve(); buildTools();
     } catch (err) { alert('Error parsing .urumizuri: ' + err.message); }
   };
@@ -1319,7 +1448,7 @@ document.getElementById('openBake').onchange=e=>{
 let srcImage = null;
 const sepBtn  = document.getElementById('sepBtn');
 const sepNote = document.getElementById('sepNote');
-document.getElementById('commitPassBtn').onclick = manualCommitPass;
+document.getElementById('commitPassBtn').onclick = () => { if(running) pause(); flushPending(); };
 
 function loadImageFile(file){
   if(!file || !file.type.startsWith('image/')){ sepNote.textContent='not an image'; return; }
@@ -1347,15 +1476,7 @@ document.getElementById('imgFile').onchange = e => { loadImageFile(e.target.file
 
 sepBtn.onclick = separateImage;
 
-function manualCommitPass() {
-  if (!pendingMarks.length && !pendingSeparation && pendingBleed <= 0) return;
-  if (pendingMarks.length || pendingSeparation) {
-    chain.push({ kind: 'pass', op: pendingSeparation ? 'separate' : 'marks', deposits: pendingMarks.slice(), settings: { pitch: P.pitch, mixing: P.mixing }, snap: snapshotField() });
-    pendingMarks = []; pendingSeparation = false; committedInkCount = inks.length;
-  }
-  if (pendingBleed > 0) commitBleed();
-  else { trimSnaps(); rebuildChainUI(); buildTools(); }
-}
+function manualCommitPass() { flushPending(); }   /* legacy alias */
 
 /* ── REWORKED IMAGE SEPARATION MATRIX WITH PER-INK METRIC EXTRACTOR ── */
 function separateImage() {
@@ -1366,18 +1487,30 @@ function separateImage() {
   const cap = 440; const sc = Math.min(1, cap / Math.max(iw, ih));
   iw = Math.max(8, Math.round(iw * sc)); ih = Math.max(8, Math.round(ih * sc));
   
-  if (W !== iw || H !== ih) {
+  const sizeChanged = (W !== iw || H !== ih);
+  if (sizeChanged) {
     W = tank.width = iw; H = tank.height = ih; alloc();
-    chain = []; pendingMarks = []; pendingBleed = 0; loadsTotal = 0; running = false; pendingSeparation = false;
+    resetChain(); loadsTotal = 0; running = false;   // fresh bath: the whole current palette is armed
   } else {
-    restoreField(lastSnap()); pendingMarks = []; pendingBleed = 0;
+    flushPending();                            // close any open pass / exit preview (locks a prior run)
+    restoreField(Chain.lastSnap(chainState));  // overlay onto the committed head
+  }
+
+  // separation prints through the ARMED (mutable) inks only — committed drums keep their own
+  // channels untouched, so a second run lands as a NEW wet layer instead of piling onto saturated load
+  const k0 = committedInkCount, kN = NUM_INKS;
+  if (kN <= k0) {
+    restoreField(Chain.lastSnap(chainState));  // nothing to print into — leave the bath as-is
+    resolve();
+    sepNote.textContent = 'console is empty — arm inks (add / reload a drum), then separate';
+    return;
   }
 
   const off = document.createElement('canvas'); off.width = W; off.height = H;
   const octx = off.getContext('2d'); octx.drawImage(srcImage, 0, 0, W, H);
   const src = octx.getImageData(0, 0, W, H).data;
 
-  const sep = []; 
+  const sep = [];
   for (let k = 0; k < NUM_INKS; k++) sep.push(new Float32Array(W * H));
   
   // Calculate variance/contrast pre-pass buffer if any ink demands it
@@ -1406,7 +1539,7 @@ function separateImage() {
     const r = src[o] / 255; const g = src[o + 1] / 255; const b = src[o + 2] / 255;
     const brightness = r * 0.299 + g * 0.587 + b * 0.114;
     
-    for (let k = 0; k < NUM_INKS; k++) {
+    for (let k = k0; k < kN; k++) {
       if (inks[k].type === 'water') { sep[k][i] = 0; continue; }
       
       const channel = inks[k].targetChannel || 'brightness';
@@ -1429,13 +1562,24 @@ function separateImage() {
     }
   }
 
-  halftoneDeposit(sep); 
   active = { x0: 0, y0: 0, x1: W - 1, y1: H - 1 };
-  resolve();
-  
-  pendingSeparation = true;
-  updateTimeUI(); rebuildChainUI();
-  sepNote.textContent = t('sepDone').replace('{n}', NUM_INKS).replace('{p}', P.pitch);
+
+  // ── throwaway diagnostic for the "layering has minimal effect" question ──
+  const meanLoad = () => { const m=[]; for(let k=0;k<NUM_INKS;k++){ let s=0; for(let i=0;i<W*H;i++) s+=loadA[k][i]; m.push(+(s/(W*H)).toFixed(3)); } return m; };
+  const _before = meanLoad();
+
+  // a separation is one replayable deposit: its halftone field rides on the event,
+  // so undo peels it cleanly (restore base, replay nothing) and never eats an underlayer
+  dispatch({t:'deposit', ev:{tool:'separate', sep:sep, pitch:P.pitch}});
+
+  const _after = meanLoad();
+  console.log('[separate] committed[0,'+k0+') untouched · armed['+k0+','+kN+') printed',
+    '\n  mean load before:', _before, '\n  mean load after: ', _after,
+    '\n  committed Δ (should be ~0):', _before.slice(0,k0).map((v,i)=>+(_after[i]-v).toFixed(3)),
+    '\n  armed Δ:', _before.slice(k0,kN).map((v,i)=>+(_after[k0+i]-v).toFixed(3)));
+
+  updateTimeUI();
+  sepNote.textContent = t('sepDone').replace('{n}', (kN-k0)).replace('{p}', P.pitch);
 }
 
 function halftoneDeposit(sep){
@@ -1464,9 +1608,9 @@ function halftoneDeposit(sep){
 }
 
 const I18N = {
-  tagline:   {en:'<b>bakezuri</b> — 1M dips of a brush', ja:'<b>化け摺り</b> — 百万円の筆ひと浸し'},
+  tagline:   {en:'<b><span class="blood">bake</span>zuri</b> — 1M dips of a brush', ja:'<b>化け摺り</b> — 百万円の筆ひと浸し'},
   gloss:     {en:'Float ink on a wet bath; it bleeds, mixes, and never quite dries. Slide toward <em>装</em> and the same engine holds still — fixes, flattens, and prints itself in halftone dots. Time is still until you play the bleed; sequence is material — each pass lands on what the last one left.', ja:'濡れた浴に墨を浮かべる。滲み、混ざり、乾ききらない。<em>装</em>へ寄せれば同じ機構が静止し、定着し、平らになり、網点で刷られる。時は止まったまま、滲みを再生するまで動かない。順序は物質だ — どの摺りも前の摺りが遺したものの上に降りる。'},
-  h_disguise:{en:'disguise', ja:'化け'}, h_separate:{en:'separate', ja:'分解'}, h_inks:{en:'inks', ja:'墨'}, h_bath:{en:'bath', ja:'水'}, h_screen:{en:'screen', ja:'網'}, h_bleed:{en:'bleed', ja:'滲み'}, h_pull:{en:'pull', ja:'摺り'}, h_process:{en:'process', ja:'経'}, poleSoak:{en:'soak', ja:'浸'}, poleSuit:{en:'suit', ja:'装'}, type:{en:'type', ja:'種'}, targetChannel:{en:'target', ja:'対象域'}, colour:{en:'colour', ja:'色'}, thin:{en:'thin', ja:'淡'}, addInk:{en:'+ add ink', ja:'＋墨を足す'}, delInk:{en:'− remove', ja:'－除く'}, wetness:{en:'wetness', ja:'湿り'}, bleedAmt:{en:'bleed', ja:'滲み'}, grainF:{en:'grain feathering', ja:'紙の毛羽'}, background:{en:'background', ja:'下地'}, renderOnly:{en:'· render only', ja:'· 表示のみ'}, substrate:{en:'substrate', ja:'地'}, water:{en:'水 water', ja:'水'}, paper:{en:'紙 paper', ja:'紙'}, overprint:{en:'overprint', ja:'重ね刷り'}, subtractive:{en:'subtractive', ja:'減法'}, additive:{en:'additive', ja:'加法'}, dotPitch:{en:'dot pitch', ja:'網点間隔'}, dotJitter:{en:'dot jitter', ja:'網点の揺らぎ'}, waterScreen:{en:'lay water screen 水 · repel', ja:'水の網を敷く · 反発'}, play:{en:'▶ play bleed', ja:'▶ 滲みを再生'}, pause:{en:'❚❚ pause', ja:'❚❚ 停止'}, vframes:{en:'video · frames', ja:'動画 · コマ'}, vsteps:{en:'video · steps / frame', ja:'動画 · コマ毎の歩'}, renderVideo:{en:'render bleed → .webm', ja:'滲みを書き出す → .webm'}, clearBath:{en:'clear bath', ja:'浴を流す'}, undo:{en:'↶ undo', ja:'↶ 戻す'}, pngBg:{en:'on background', ja:'下地つき'}, pngStamp:{en:'stamp the pull', ja:'摺りを捺す'}, pngClear:{en:'ink only', ja:'墨のみ'}, openUrumi:{en:'open .urumizuri', ja:'.urumizuri を開く'}, openBake:{en:'perform .bakezuri', ja:'.bakezuri を演じる'}, loadImg:{en:'load image', ja:'画像を読む'}, sepBtn:{en:'separate → bath', ja:'分解 → 浴'}, playing:{en:'playing', ja:'再生中'}, still:{en:'still', ja:'静止'}, nodes:{en:'nodes', ja:'節'}, marks:{en:'marks', ja:'点'}, sep:{en:'分解', ja:'分解'}, chainEmpty:{en:'— no passes yet · deposit, then play the bleed —', ja:'— まだ摺りなし · 置いてから滲みを再生 —'}, sepDone:{en:'separated into {n} inks @ pitch {p} — play the bleed to dissolve the screen', ja:'{n}色に分解 · 網点{p} — 滲みを再生して網を溶かす'}, noteSep:{en:'A picture, cut into your inks on the screen — palette + grid, the quantization — laid down wet so the bleed dissolves it back. Your inks are the basis; colours they can\'t mix don\'t survive.', ja:'画像を網の上であなたの墨へ裁つ — 色数＋格子、量子化だ — 濡れたまま置けば滲みが解いてゆく。墨が基底、混ぜられない色は残らない。'}, noteBleed:{en:'Step the bleed by hand, or play it. Time only moves here.', ja:'滲みを手で進めるか、再生する。時はここでだけ動く。'}, noteScreen:{en:'The screen strengthens automatically toward 装. A water screen lays the riso pattern as repulsion — set inks get pushed into the gaps.', ja:'網は装へ寄るほど強まる。水の網はリソの模様を反発として敷く — 定着した墨は隙間へ押し出される。'}, noteSave:{en:'Background is a viewing choice — not written into .urumizuri or .bakezuri. .bakezuri stores the whole process (passes + bleeds), seedless: every performance bleeds differently.', ja:'下地は見えかたの選択 — .urumizuri にも .bakezuri にも書かれない。.bakezuri は工程全体（摺りと滲み）を種なしで保つ。演じるたび滲みは異なる。'}
+  h_disguise:{en:'disguise', ja:'化け'}, h_separate:{en:'separate', ja:'分解'}, h_inks:{en:'inks', ja:'墨'}, h_bath:{en:'bath', ja:'水'}, h_screen:{en:'screen', ja:'網'}, h_bleed:{en:'bleed', ja:'滲み'}, h_pull:{en:'pull', ja:'摺り'}, h_process:{en:'process', ja:'経'}, poleSoak:{en:'soak', ja:'浸'}, poleSuit:{en:'suit', ja:'装'}, type:{en:'type', ja:'種'}, targetChannel:{en:'target', ja:'対象域'}, colour:{en:'colour', ja:'色'}, thin:{en:'thin', ja:'淡'}, addInk:{en:'+ add ink', ja:'＋墨を足す'}, delInk:{en:'− remove', ja:'－除く'}, clearInks:{en:'⊘ clear', ja:'⊘ 流す'}, wetness:{en:'wetness', ja:'湿り'}, bleedAmt:{en:'bleed', ja:'滲み'}, grainF:{en:'grain feathering', ja:'紙の毛羽'}, background:{en:'background', ja:'下地'}, renderOnly:{en:'· render only', ja:'· 表示のみ'}, substrate:{en:'substrate', ja:'地'}, water:{en:'水 water', ja:'水'}, paper:{en:'紙 paper', ja:'紙'}, overprint:{en:'overprint', ja:'重ね刷り'}, subtractive:{en:'subtractive', ja:'減法'}, additive:{en:'additive', ja:'加法'}, dotPitch:{en:'dot pitch', ja:'網点間隔'}, dotJitter:{en:'dot jitter', ja:'網点の揺らぎ'}, waterScreen:{en:'lay water screen 水 · repel', ja:'水の網を敷く · 反発'}, play:{en:'▶ play bleed', ja:'▶ 滲みを再生'}, pause:{en:'❚❚ pause', ja:'❚❚ 停止'}, vframes:{en:'video · frames', ja:'動画 · コマ'}, vsteps:{en:'video · steps / frame', ja:'動画 · コマ毎の歩'}, renderVideo:{en:'render bleed → .webm', ja:'滲みを書き出す → .webm'}, clearBath:{en:'clear bath', ja:'浴を流す'}, undo:{en:'↶ undo', ja:'↶ 戻す'}, pngBg:{en:'on background', ja:'下地つき'}, pngStamp:{en:'stamp the pull', ja:'摺りを捺す'}, pngClear:{en:'ink only', ja:'墨のみ'}, openUrumi:{en:'open .urumizuri', ja:'.urumizuri を開く'}, openBake:{en:'perform .bakezuri', ja:'.bakezuri を演じる'}, loadImg:{en:'load image', ja:'画像を読む'}, sepBtn:{en:'separate → bath', ja:'分解 → 浴'}, playing:{en:'playing', ja:'再生中'}, still:{en:'still', ja:'静止'}, nodes:{en:'nodes', ja:'節'}, marks:{en:'marks', ja:'点'}, sep:{en:'分解', ja:'分解'}, chainEmpty:{en:'— no passes yet · deposit, then play the bleed —', ja:'— まだ摺りなし · 置いてから滲みを再生 —'}, sepDone:{en:'separated into {n} inks @ pitch {p} — play the bleed to dissolve the screen', ja:'{n}色に分解 · 網点{p} — 滲みを再生して網を溶かす'}, noteSep:{en:'A picture, cut into your inks on the screen — palette + grid, the quantization — laid down wet so the bleed dissolves it back. Your inks are the basis; colours they can\'t mix don\'t survive.', ja:'画像を網の上であなたの墨へ裁つ — 色数＋格子、量子化だ — 濡れたまま置けば滲みが解いてゆく。墨が基底、混ぜられない色は残らない。'}, noteBleed:{en:'Step the bleed by hand, or play it. Time only moves here.', ja:'滲みを手で進めるか、再生する。時はここでだけ動く。'}, noteScreen:{en:'The screen strengthens automatically toward 装. A water screen lays the riso pattern as repulsion — set inks get pushed into the gaps.', ja:'網は装へ寄るほど強まる。水の網はリソの模様を反発として敷く — 定着した墨は隙間へ押し出される。'}, noteSave:{en:'Background is a viewing choice — not written into .urumizuri or .bakezuri. .bakezuri stores the whole process (passes + bleeds), seedless: every performance bleeds differently.', ja:'下地は見えかたの選択 — .urumizuri にも .bakezuri にも書かれない。.bakezuri は工程全体（摺りと滲み）を種なしで保つ。演じるたび滲みは異なる。'}
 };
 let lang = 'en';
 function t(key){ const e=I18N[key]; return e ? (e[lang]||e.en) : key; }
