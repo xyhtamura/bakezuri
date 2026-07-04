@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Shippori+Mincho:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DotGothic16&family=IBM+Plex+Sans+JP:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Zen+Old+Mincho:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
    化け摺り  BAKEZURI  — a marbling-printer wearing a riso disguise.
@@ -22,8 +23,8 @@
   unicode-range: U+3000-303F, U+3040-309F, U+30A0-30FF, U+31F0-31FF, U+4E00-9FFF, U+FF00-FFEF;
 }
 @font-face{
-  font-family:"Bakezuri-Latin-Display";
-  src:url("Bakezuri-Latin-Display.woff2") format("woff2");
+  font-family:"Inkbleed";
+  src:url("Inkbleed Regular.ttf") format("opentype");
   font-display:swap;
   unicode-range:U+0000-00FF, U+0100-024F;
 }
@@ -72,10 +73,12 @@
   --iris-glow:  rgba(123,111,240,.40);
   --bezel:      rgba(255,255,255,.055);
   --bezel-d:    rgba(0,0,0,.55);
-  --f-disp-jp: "Shippori Mincho","Kaisei Tokumin",serif;
-  --f-disp-en: "Fraunces","Shippori Mincho",serif;
-  --f-ui-jp:   "Zen Kaku Gothic New","IBM Plex Sans JP",sans-serif;
-  --f-ui-en:   "IBM Plex Sans","Zen Kaku Gothic New",system-ui,sans-serif;
+  --f-disp-jp: 'Bakezuri-Display', 'Zen Old Mincho', serif;
+  --f-disp-en: 'Inkbleed', 'Cormorant Garamond', serif;
+  --f-ui-jp:   'Bakezuri-UI', 'IBM Plex Sans JP', sans-serif;
+  --f-ui-en:   'Bakezuri-UI', 'IBM Plex Sans', sans-serif;
+  --f-mono-jp: 'Bakezuri-Mono', 'DotGothic16', monospace;
+  --f-mono-en: 'Bakezuri-Mono', 'Share Tech Mono', monospace;
   --f-mono:    "IBM Plex Mono","Space Mono","Courier New",monospace;
   --f-pixel:   "DotGothic16","IBM Plex Mono",monospace;
   --f-disp: var(--f-disp-jp);
@@ -337,7 +340,7 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
   </div>
   <div class="title-row">
     <span class="kanji">化け摺り</span>
-  <span class="romaji" data-i18n="tagline"><b><span class="blood">bake</span>zuri</b> — 1M dips of a brush</span>
+  <span class="romaji" data-i18n="tagline"><b><span class="blood">bake</span>zuri</b> : 1M dips of a brush</span>
   </div>
   <p class="gloss" data-i18n="gloss">Float ink on a wet bath; it bleeds, mixes, and never quite dries. Slide toward
     <em>装</em> and the same engine holds still — fixes, flattens, and prints itself in halftone dots.
@@ -1616,7 +1619,7 @@ function halftoneDeposit(sep){
 }
 
 const I18N = {
-  tagline:   {en:'<b><span class="blood">bake</span>zuri</b> — 1M dips of a brush', ja:'<b>化け摺り</b> — 百万円の筆ひと浸し'},
+  tagline:   {en:'<b><span class="blood">bake</span>zuri</b> : 1M dips of a brush', ja:'<b>化け摺り</b> — 百万円の筆ひと浸し'},
   gloss:     {en:'Float ink on a wet bath; it bleeds, mixes, and never quite dries. Slide toward <em>装</em> and the same engine holds still — fixes, flattens, and prints itself in halftone dots. Time is still until you play the bleed; sequence is material — each pass lands on what the last one left.', ja:'濡れた浴に墨を浮かべる。滲み、混ざり、乾ききらない。<em>装</em>へ寄せれば同じ機構が静止し、定着し、平らになり、網点で刷られる。時は止まったまま、滲みを再生するまで動かない。順序は物質だ — どの摺りも前の摺りが遺したものの上に降りる。'},
   h_disguise:{en:'disguise', ja:'化け'}, h_separate:{en:'separate', ja:'分解'}, h_inks:{en:'inks', ja:'墨'}, h_bath:{en:'bath', ja:'水'}, h_screen:{en:'screen', ja:'網'}, h_bleed:{en:'bleed', ja:'滲み'}, h_pull:{en:'pull', ja:'摺り'}, h_process:{en:'process', ja:'経'}, poleSoak:{en:'soak', ja:'浸'}, poleSuit:{en:'suit', ja:'装'}, type:{en:'type', ja:'種'}, targetChannel:{en:'target', ja:'対象域'}, colour:{en:'colour', ja:'色'}, thin:{en:'thin', ja:'淡'}, addInk:{en:'+ add ink', ja:'＋墨を足す'}, delInk:{en:'− remove', ja:'－除く'}, clearInks:{en:'⊘ clear', ja:'⊘ 流す'}, wetness:{en:'wetness', ja:'湿り'}, bleedAmt:{en:'bleed', ja:'滲み'}, grainF:{en:'grain feathering', ja:'紙の毛羽'}, background:{en:'background', ja:'下地'}, renderOnly:{en:'· render only', ja:'· 表示のみ'}, substrate:{en:'substrate', ja:'地'}, water:{en:'水 water', ja:'水'}, paper:{en:'紙 paper', ja:'紙'}, overprint:{en:'overprint', ja:'重ね刷り'}, subtractive:{en:'subtractive', ja:'減法'}, additive:{en:'additive', ja:'加法'}, dotPitch:{en:'dot pitch', ja:'網点間隔'}, dotJitter:{en:'dot jitter', ja:'網点の揺らぎ'}, waterScreen:{en:'lay water screen 水 · repel', ja:'水の網を敷く · 反発'}, play:{en:'▶ play bleed', ja:'▶ 滲みを再生'}, pause:{en:'❚❚ pause', ja:'❚❚ 停止'}, vframes:{en:'video · frames', ja:'動画 · コマ'}, vsteps:{en:'video · steps / frame', ja:'動画 · コマ毎の歩'}, renderVideo:{en:'render bleed → .webm', ja:'滲みを書き出す → .webm'}, clearBath:{en:'clear bath', ja:'浴を流す'}, undo:{en:'↶ undo', ja:'↶ 戻す'}, pngBg:{en:'on background', ja:'下地つき'}, pngStamp:{en:'stamp the pull', ja:'摺りを捺す'}, pngClear:{en:'ink only', ja:'墨のみ'}, openUrumi:{en:'open .urumizuri', ja:'.urumizuri を開く'}, openBake:{en:'perform .bakezuri', ja:'.bakezuri を演じる'}, loadImg:{en:'load image', ja:'画像を読む'}, sepBtn:{en:'separate → bath', ja:'分解 → 浴'}, playing:{en:'playing', ja:'再生中'}, still:{en:'still', ja:'静止'}, nodes:{en:'nodes', ja:'節'}, marks:{en:'marks', ja:'点'}, sep:{en:'分解', ja:'分解'}, chainEmpty:{en:'— no passes yet · deposit, then play the bleed —', ja:'— まだ摺りなし · 置いてから滲みを再生 —'}, sepDone:{en:'separated into {n} inks @ pitch {p} — play the bleed to dissolve the screen', ja:'{n}色に分解 · 網点{p} — 滲みを再生して網を溶かす'}, noteSep:{en:'A picture, cut into your inks on the screen — palette + grid, the quantization — laid down wet so the bleed dissolves it back. Your inks are the basis; colours they can\'t mix don\'t survive.', ja:'画像を網の上であなたの墨へ裁つ — 色数＋格子、量子化だ — 濡れたまま置けば滲みが解いてゆく。墨が基底、混ぜられない色は残らない。'}, noteBleed:{en:'Step the bleed by hand, or play it. Time only moves here.', ja:'滲みを手で進めるか、再生する。時はここでだけ動く。'}, noteScreen:{en:'The screen strengthens automatically toward 装. A water screen lays the riso pattern as repulsion — set inks get pushed into the gaps.', ja:'網は装へ寄るほど強まる。水の網はリソの模様を反発として敷く — 定着した墨は隙間へ押し出される。'}, noteSave:{en:'Background is a viewing choice — not written into .urumizuri or .bakezuri. .bakezuri stores the whole process (passes + bleeds), seedless: every performance bleeds differently.', ja:'下地は見えかたの選択 — .urumizuri にも .bakezuri にも書かれない。.bakezuri は工程全体（摺りと滲み）を種なしで保つ。演じるたび滲みは異なる。'}
 };

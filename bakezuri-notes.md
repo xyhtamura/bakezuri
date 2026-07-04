@@ -189,7 +189,8 @@ shared, frozen core.
 
 **Open / to explore:**
 - **New process-node types** beyond pass/bleed — a **comb/rake** gesture is the obvious suminagashi
-  one (drag a stylus across the floating field).
+  one (drag a stylus across the floating field). See §11 for the blobSketch/Jaffer study — the
+  displacement-map route may be the shortest path to both drop rings and the comb.
 - **URMZ v2 / ink-definition question:** .urumizuriis now decisively the wet-field goopCodec: a vulnerable matrix that can be decoded, damaged, and reopened. The remaining question is whether futureURMZ v2should also store ink definitions + params, or whether those should remain a separate settings/tuning object. CurrentURMZ v1` should be documented as matrix-first: width, height, ink count, fix field, and load channels.
 - **Determinism slider at the chain level** — save recipe alone (re-performs, 浸) vs recipe + snapshots
   (pinned reproducible edition, 装). The one-bit choice, scaled up.
@@ -243,6 +244,81 @@ shared, frozen core.
   `loadParamsAndInks`, `replayChain`, open handlers.
 - **i18n:** `I18N`, `t`, `setLang`, `#langBtn`.
 - **Tuning constants:** `NUM_INKS` (dynamic), `MAX_SNAPS=18`, `STOCK`, `bg`, separation `cap=440`/`ITER=26`.
+
+---
+
+## 11. blobSketch study — Lagrangian lessons for a field engine (2026-07-03)
+
+Read `F:\xyhtamura\blobSketch-main\index.html` (single-file WebGL soft-body toy) as a reference for
+liquid interaction feel. It is the **opposite architecture** — Lagrangian (blobs = closed chains of
+point-masses with springs) vs our Eulerian field — which is exactly why it's instructive: it shows
+what boundary-based liquids do that pure diffusion can't. Line refs are into that file.
+
+**Transferable:**
+
+1. **Comb/rake = their attractor path** (`simulateAttractorRepulsorForces`, ~line 13679). A drawn
+   path exerts force on nearby points with distance falloff; a *tangential-flow mode* pushes along
+   the path direction, modulated by a per-path **gradient curve** (strength varying along the path —
+   steal this UI idea). Field version: `{tool:'rake', path, strength}` deposit that advects load
+   along the path tangent — same upwind mass-conserving machinery as water repulsion, sign-flipped
+   to follow a drawn direction instead of a water hill. ⚠ Their temporal modes use `Date.now()` —
+   would break our "deposits deterministic by construction" invariant (§9). Time must be pass-local
+   or absent.
+
+2. **Immiscibility (roadmap #1) sharpened.** Their drops jostle-but-don't-blend via *pairwise-
+   asymmetric* repulsion: cohesion within a chain (1.0), repulsion across chains (`interRepelMult`).
+   Generalizes our planned boolean `repels` flag to a **per-ink-pair repulsion coefficient**. And it
+   exposes the missing half: territorial inks need *self-cohesion*, not just other-repulsion — in
+   field terms an ink advecting gently **up its own gradient** (Cahn–Hilliard-style phase
+   separation). That's what gives a drop a held boundary instead of Gaussian smear.
+
+3. **Runaway-proofing recipe** (turgor controller, lines ~13354–13508). Their inflation is an
+   area-target feedback loop stabilized by: tanh-saturated error, an opposing Hookean tension term,
+   hysteresis at rest, normal-velocity damping, and a hard per-edge force clamp. Any self-cohesion /
+   anti-diffusion term we add for #2 is the same species of positive feedback — apply the same
+   recipe (saturate the sharpening term, oppose with diffusion, clamp per cell, hysteresis near
+   equilibrium).
+
+4. **Wetness envelope.** Their "excitability poke" (damping drops instantly, eases back over ~300ms)
+   is what makes interaction feel alive. Field analog: a deposit carries transient extra mobility —
+   fresh ink diffuses eagerly, settles as it "dries." One per-deposit scalar decaying over steps.
+
+**Do NOT copy:** the ambient noise field. Bleed is deliberate, not ambient (§2 doctrine); their
+always-wobbling idle state is charming there, doctrine-breaking here.
+
+### Jaffer-style mathematical marbling (the physics thread — Xyh exploring personally)
+
+blobSketch's chains resemble how **mathematical marbling** (Aubrey Jaffer; also Lu et al.,
+"Mathematical Marbling", IEEE CG&A 2012) models suminagashi: each gesture is a **closed-form,
+invertible, area-preserving displacement map** of the plane, and the picture is the composition of
+those maps. The two primitives:
+
+- **Drop** of radius `r` at centre `c`: every existing point `p` moves outward to
+  `p' = c + (p − c) · √(1 + r² / |p − c|²)`. Pushes prior ink aside conservatively; iterated drops
+  give the concentric-ring suminagashi pattern for free.
+- **Tine / comb stroke** along a line with unit direction `m`, point `a` on the line: points shift
+  parallel to the line by `α · λ / (λ + d)` where `d` = perpendicular distance from the line, `α` =
+  max displacement, `λ` = falloff scale. A comb = several parallel tines composed.
+
+Application to our engine: apply to the `Float32Array` load fields by **backward mapping** (for each
+cell, invert the transform, sample source field bilinearly). Properties that make it doctrine-clean:
+deterministic (replayable from `.bakezuri` — no RNG), single-shot (no per-frame cost; composes with
+bleed rather than competing with it), and near-mass-conserving (the maps are measure-preserving;
+bilinear resampling is the only leak — worth quantifying, see below). A `drop`/`comb` displacement
+deposit + existing diffusion may be the **shortest path to real marbling**: Jaffer supplies the
+rings and the comb, the wet field supplies what Jaffer can't — bleed, grain, water, fixing.
+
+Physics things to explore (Xyh):
+- The drop map is the incompressible radial flow of a point source integrated to time-∞ — connect to
+  Stokes/potential flow and to why real suminagashi rings stay sharp (advection ≫ diffusion, high
+  Péclet number; our disguise slider effectively *is* a Péclet knob).
+- Exact inverse of the drop map: `p = c + (p' − c) · √(1 − r² / |p' − c|²)` for `|p' − c| > r`;
+  cells landing *inside* radius `r` have no preimage — that's where the *new* drop's ink goes.
+  The comb map inverts by negating the displacement.
+- Mass conservation under repeated backward-resampling: measure the drift, decide if it needs a
+  renormalization pass (divide by resampled total per ink) or if the leak is acceptable poetics.
+- Composition order = sequence-as-material (§1) restated as maps: later gestures deform earlier
+  ink — the same "an ink mixes with what came before it, never after," now geometric.
 
 ---
 
