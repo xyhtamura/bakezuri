@@ -456,6 +456,9 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
           <button data-v="subtractive" class="on" data-i18n="subtractive">subtractive</button>
           <button data-v="additive" data-i18n="additive">additive</button>
         </div></div>
+      <div class="ctl" style="margin-top:.55rem"><div class="lab"><span data-i18n="repelPrior">repel prior ink</span><span class="v" id="repelV">—</span></div>
+        <input type="range" id="repel" min="0" max="100" value="100"></div>
+      <p class="note" data-i18n="noteRepel">Captured by the next ink application. At 100%, new ink clears its whole footprint and warps earlier pigment into a ring.</p>
     </div>
 
     <div class="organ">
@@ -521,20 +524,19 @@ button.act:active{ box-shadow:inset 0 2px 5px rgba(0,0,0,.6); transform:translat
   <span class="jp">化け摺り</span> · bakezuri — a Sgueltch instrument · the screen quantizes, the bleed refuses · 浸 ⟷ 装
 </footer>
 
+<script src="bakezuri-repel.js"></script>
 <script>
 "use strict";
 
 const tank = document.getElementById('tank');
 const tctx = tank.getContext('2d', { willReadFrequently:false });
 
-let NUM_INKS = 4;
+let NUM_INKS = 2;
 let W = tank.width, H = tank.height;
 
 const inks = [
-  { name:'sumi-teal',  kanji:'藍', type:'flat',       targetChannel:'brightness', color:'#15808f', color2:'#0a3b6e' },
-  { name:'riso-pink',  kanji:'桃', type:'glow',       targetChannel:'r',          color:'#ff2f7a', color2:'#ffd23f' },
-  { name:'oil',        kanji:'虹', type:'iridescent', targetChannel:'g',          color:'#8a7bff', color2:'#2fe0c0' },
-  { name:'bruise',     kanji:'痣', type:'duo',        targetChannel:'b',          color:'#6a3fb0', color2:'#1f9c84' },
+  { name:'sumi-teal',  kanji:'藍', type:'flat', targetChannel:'brightness', color:'#15808f', color2:'#15808f' },
+  { name:'riso-pink',  kanji:'桃', type:'flat', targetChannel:'r',          color:'#ff2f7a', color2:'#ff2f7a' },
 ];
 
 let loadA, loadB;
@@ -566,7 +568,7 @@ function consoleCount(){ return inks.length - committedInkCount; }
 function spawnInk(seed){
   const idx=inks.length;
   inks.push(Object.assign({ name:'ink'+(idx+1), kanji:INK_KANJI[idx%INK_KANJI.length],
-              type:'shift', targetChannel:'brightness', color:'#3fb0c8', color2:'#e9c24a' }, seed||{}));
+              type:'flat', targetChannel:'brightness', color:'#3fb0c8', color2:'#3fb0c8' }, seed||{}));
   // a fresh slot is always a new wet channel — never re-points an existing one
   delete inks[idx].pass; delete inks[idx].committed;
   loadA.push(new Float32Array(W*H)); loadB.push(new Float32Array(W*H));
@@ -606,7 +608,7 @@ function removeInk(idx){
 
 const P = {
   disguise:0.14, wetness:0.78, bleed:0.52, grain:0.46,
-  substrate:'water', mixing:'subtractive', pitch:7, dotJitter:0.42,
+  substrate:'water', mixing:'subtractive', repel:1.0, pitch:7, dotJitter:0.42,
   selInk:0, tool:'ink'
 };
 
@@ -781,7 +783,23 @@ function markActive(cx,cy,r){
          active.x1=Math.max(active.x1,x1); active.y1=Math.max(active.y1,y1); }
 }
 
-function depositInk(k, cx, cy, r, amount){
+function repelPriorInk(k, cx, cy, r, application){
+  if(!application || !window.BakezuriRepel || !inks[k] || inks[k].type==='water') return;
+  const savedStrength=application.repel!==undefined ? application.repel : application.carve;
+  const strength=Math.max(0,Math.min(1,+savedStrength||0));
+  const under=Math.max(0,Math.min(NUM_INKS,application.under|0));
+  if(strength<=0 || under<=0) return;
+  const channels=[];
+  for(let i=0;i<under;i++) if(i!==k && inks[i] && inks[i].type!=='water') channels.push(i);
+  if(!channels.length) return;
+  const moved=window.BakezuriRepel.apply(loadA, {
+    width:W, height:H, channels, cx, cy, radius:r, strength, scratch:repelDelta
+  });
+  if(moved.bounds) markActive(cx,cy,Math.ceil(r*Math.SQRT2+2));
+}
+
+function depositInk(k, cx, cy, r, amount, application){
+  repelPriorInk(k,cx,cy,r,application);
   const f = loadA[k];
   let wsum=0; const cells=[];
   for(let y=cy-r;y<=cy+r;y++){ if(y<0||y>=H) continue;
@@ -857,8 +875,8 @@ function depositWaterScreen(pitch){
 function applyDeposit(ev){
   if(ev.tool==='surfactant') depositSurfactant(ev.x,ev.y,ev.r);
   else if(ev.tool==='waterscreen') depositWaterScreen(ev.pitch);
-  else if(ev.tool==='separate') halftoneDeposit(ev.sep);
-  else { depositInk(ev.ink, ev.x, ev.y, ev.r, ev.amount); loadsTotal++; }
+  else if(ev.tool==='separate') halftoneDeposit(ev.sep,ev);
+  else { depositInk(ev.ink, ev.x, ev.y, ev.r, ev.amount,ev); loadsTotal++; }
 }
 
 function step(){
@@ -931,7 +949,7 @@ function step(){
 }
 
 const STOCK = [0xf3/255, 0xf6/255, 0xef/255];
-let bg = [0x10/255, 0x0c/255, 0x0a/255];
+let bg = [0xe7/255, 0xef/255, 0xe1/255];
 
 function hexToRGB(h){ return [parseInt(h.slice(1,3),16)/255, parseInt(h.slice(3,5),16)/255, parseInt(h.slice(5,7),16)/255]; }
 let inkRGB = inks.map(k=>hexToRGB(k.color));
@@ -1057,7 +1075,7 @@ function depoAt(x,y){
   const r = P.tool==='surfactant' ? 14 : 9;
   if(P.tool==='surfactant'){ addMark({tool:'surfactant', ink:-1, x, y, r, amount:0}); return; }
   if(P.selInk < committedInkCount || P.selInk >= inks.length) return;  // no armed ink — arm one first
-  addMark({tool:'ink', ink:P.selInk, x, y, r, amount:1.7});
+  addMark({tool:'ink', ink:P.selInk, x, y, r, amount:1.7, repel:P.repel, under:committedInkCount});
 }
 tank.addEventListener('pointerdown', e=>{
   if(running) return;
@@ -1179,6 +1197,7 @@ bindSlider('disguise','disguise', v=>v/100);
 bindSlider('wetness','wetness', v=>v/100, ()=>document.getElementById('wetV').textContent=document.getElementById('wetness').value+'%');
 bindSlider('bleed','bleed', v=>v/100, ()=>document.getElementById('bleedV').textContent=document.getElementById('bleed').value+'%');
 bindSlider('grain','grain', v=>v/100, ()=>document.getElementById('grainV').textContent=document.getElementById('grain').value+'%');
+bindSlider('repel','repel', v=>v/100, ()=>document.getElementById('repelV').textContent=document.getElementById('repel').value+'%');
 bindSlider('pitch','pitch', v=>v, ()=>{document.getElementById('pitchV').textContent=document.getElementById('pitch').value+'px'; if(active&&!running)resolve();});
 bindSlider('dotjit','dotJitter', v=>v/100, ()=>{document.getElementById('djV').textContent=document.getElementById('dotjit').value+'%'; if(active&&!running)resolve();});
 
@@ -1321,7 +1340,7 @@ document.getElementById('saveBake').onclick=()=>{
     format:'bakezuri-score', version:2,
     width:W, height:H,
     inks:inks.map(k=>({name:k.name,kanji:k.kanji,type:k.type,targetChannel:k.targetChannel,color:k.color,color2:k.color2})),
-    params:{ disguise:P.disguise, wetness:P.wetness, bleed:P.bleed, grain:P.grain, substrate:P.substrate },
+    params:{ disguise:P.disguise, wetness:P.wetness, bleed:P.bleed, grain:P.grain, substrate:P.substrate, repel:P.repel },
     chain: chainState.chain.map(n => n.kind==='bleed'
       ? { kind:'bleed', steps:n.steps }
       : { kind:'ink',
@@ -1345,7 +1364,9 @@ function loadParamsAndInks(doc){
       {name:'ink',kanji:'墨',type:'flat',targetChannel:'brightness',color:'#888888',color2:'#888888'}, d)));
     NUM_INKS=inks.length; if(P.selInk>=NUM_INKS) P.selInk=0; refreshInkRGB();
   }
-  if(doc.params){ for(const key of ['wetness','bleed','grain','disguise','substrate','mixing','pitch'])
+  if(doc.params){
+    if(doc.params.repel===undefined && doc.params.carve!==undefined) P.repel=doc.params.carve;
+    for(const key of ['wetness','bleed','grain','disguise','substrate','mixing','repel','pitch'])
     if(doc.params[key]!==undefined) P[key]=doc.params[key];
     syncUIFromP(); }
 }
@@ -1371,8 +1392,9 @@ function syncUIFromP(){
   document.getElementById('bleed').value=Math.round(P.bleed*100);
   document.getElementById('grain').value=Math.round(P.grain*100);
   document.getElementById('disguise').value=Math.round(P.disguise*100);
+  document.getElementById('repel').value=Math.round(P.repel*100);
   document.getElementById('pitch').value=P.pitch;
-  ['wetness','bleed','grain','disguise','pitch'].forEach(id=>document.getElementById(id).dispatchEvent(new Event('input')));
+  ['wetness','bleed','grain','disguise','repel','pitch'].forEach(id=>document.getElementById(id).dispatchEvent(new Event('input')));
   document.querySelectorAll('#substrate button').forEach(b=>b.classList.toggle('on',b.dataset.v===P.substrate));
   document.querySelectorAll('#mixing button').forEach(b=>b.classList.toggle('on',b.dataset.v===P.mixing));
   buildTools(); syncInkEditor();
@@ -1581,19 +1603,19 @@ function separateImage() {
 
   // a separation is one replayable deposit: its halftone field rides on the event,
   // so undo peels it cleanly (restore base, replay nothing) and never eats an underlayer
-  dispatch({t:'deposit', ev:{tool:'separate', sep:sep, pitch:P.pitch}});
+  dispatch({t:'deposit', ev:{tool:'separate', sep:sep, pitch:P.pitch, repel:P.repel, under:k0}});
 
   const _after = meanLoad();
-  console.log('[separate] committed[0,'+k0+') untouched · armed['+k0+','+kN+') printed',
+  console.log('[separate] committed[0,'+k0+') displaced with mass conserved · armed['+k0+','+kN+') printed',
     '\n  mean load before:', _before, '\n  mean load after: ', _after,
-    '\n  committed Δ (should be ~0):', _before.slice(0,k0).map((v,i)=>+(_after[i]-v).toFixed(3)),
+    '\n  committed Δ (mass drift should be ~0):', _before.slice(0,k0).map((v,i)=>+(_after[i]-v).toFixed(3)),
     '\n  armed Δ:', _before.slice(k0,kN).map((v,i)=>+(_after[k0+i]-v).toFixed(3)));
 
   updateTimeUI();
   sepNote.textContent = t('sepDone').replace('{n}', (kN-k0)).replace('{p}', P.pitch);
 }
 
-function halftoneDeposit(sep){
+function halftoneDeposit(sep, application){
   const pitch=Math.max(3,P.pitch); const angles=[0.10,0.46,0.82,1.18];
   for(let k=0;k<NUM_INKS;k++){
     const f=sep[k], ang=angles[k%angles.length];
@@ -1612,7 +1634,7 @@ function halftoneDeposit(sep){
         const Lc=f[sy*W+sx]; if(Lc<=0.01) continue;
         const cov=1-Math.exp(-Lc*1.5); const sizeF=Math.max(0.4, 1+(h0-0.5)*scat*0.9);
         const r=Math.max(0.6, Math.sqrt(cov)*pitch*0.62*sizeF);
-        depositInk(k, sx, sy, Math.round(r), Lc*Math.PI*r*r);
+        depositInk(k, sx, sy, Math.round(r), Lc*Math.PI*r*r, application);
       }
     }
   }
@@ -1621,7 +1643,7 @@ function halftoneDeposit(sep){
 const I18N = {
   tagline:   {en:'<b><span class="blood">bake</span>zuri</b> : 1M dips of a brush', ja:'<b>化け摺り</b> — 百万円の筆ひと浸し'},
   gloss:     {en:'Float ink on a wet bath; it bleeds, mixes, and never quite dries. Slide toward <em>装</em> and the same engine holds still — fixes, flattens, and prints itself in halftone dots. Time is still until you play the bleed; sequence is material — each pass lands on what the last one left.', ja:'濡れた浴に墨を浮かべる。滲み、混ざり、乾ききらない。<em>装</em>へ寄せれば同じ機構が静止し、定着し、平らになり、網点で刷られる。時は止まったまま、滲みを再生するまで動かない。順序は物質だ — どの摺りも前の摺りが遺したものの上に降りる。'},
-  h_disguise:{en:'disguise', ja:'化け'}, h_separate:{en:'separate', ja:'分解'}, h_inks:{en:'inks', ja:'墨'}, h_bath:{en:'bath', ja:'水'}, h_screen:{en:'screen', ja:'網'}, h_bleed:{en:'bleed', ja:'滲み'}, h_pull:{en:'pull', ja:'摺り'}, h_process:{en:'process', ja:'経'}, poleSoak:{en:'soak', ja:'浸'}, poleSuit:{en:'suit', ja:'装'}, type:{en:'type', ja:'種'}, targetChannel:{en:'target', ja:'対象域'}, colour:{en:'colour', ja:'色'}, thin:{en:'thin', ja:'淡'}, addInk:{en:'+ add ink', ja:'＋墨を足す'}, delInk:{en:'− remove', ja:'－除く'}, clearInks:{en:'⊘ clear', ja:'⊘ 流す'}, wetness:{en:'wetness', ja:'湿り'}, bleedAmt:{en:'bleed', ja:'滲み'}, grainF:{en:'grain feathering', ja:'紙の毛羽'}, background:{en:'background', ja:'下地'}, renderOnly:{en:'· render only', ja:'· 表示のみ'}, substrate:{en:'substrate', ja:'地'}, water:{en:'水 water', ja:'水'}, paper:{en:'紙 paper', ja:'紙'}, overprint:{en:'overprint', ja:'重ね刷り'}, subtractive:{en:'subtractive', ja:'減法'}, additive:{en:'additive', ja:'加法'}, dotPitch:{en:'dot pitch', ja:'網点間隔'}, dotJitter:{en:'dot jitter', ja:'網点の揺らぎ'}, waterScreen:{en:'lay water screen 水 · repel', ja:'水の網を敷く · 反発'}, play:{en:'▶ play bleed', ja:'▶ 滲みを再生'}, pause:{en:'❚❚ pause', ja:'❚❚ 停止'}, vframes:{en:'video · frames', ja:'動画 · コマ'}, vsteps:{en:'video · steps / frame', ja:'動画 · コマ毎の歩'}, renderVideo:{en:'render bleed → .webm', ja:'滲みを書き出す → .webm'}, clearBath:{en:'clear bath', ja:'浴を流す'}, undo:{en:'↶ undo', ja:'↶ 戻す'}, pngBg:{en:'on background', ja:'下地つき'}, pngStamp:{en:'stamp the pull', ja:'摺りを捺す'}, pngClear:{en:'ink only', ja:'墨のみ'}, openUrumi:{en:'open .urumizuri', ja:'.urumizuri を開く'}, openBake:{en:'perform .bakezuri', ja:'.bakezuri を演じる'}, loadImg:{en:'load image', ja:'画像を読む'}, sepBtn:{en:'separate → bath', ja:'分解 → 浴'}, playing:{en:'playing', ja:'再生中'}, still:{en:'still', ja:'静止'}, nodes:{en:'nodes', ja:'節'}, marks:{en:'marks', ja:'点'}, sep:{en:'分解', ja:'分解'}, chainEmpty:{en:'— no passes yet · deposit, then play the bleed —', ja:'— まだ摺りなし · 置いてから滲みを再生 —'}, sepDone:{en:'separated into {n} inks @ pitch {p} — play the bleed to dissolve the screen', ja:'{n}色に分解 · 網点{p} — 滲みを再生して網を溶かす'}, noteSep:{en:'A picture, cut into your inks on the screen — palette + grid, the quantization — laid down wet so the bleed dissolves it back. Your inks are the basis; colours they can\'t mix don\'t survive.', ja:'画像を網の上であなたの墨へ裁つ — 色数＋格子、量子化だ — 濡れたまま置けば滲みが解いてゆく。墨が基底、混ぜられない色は残らない。'}, noteBleed:{en:'Step the bleed by hand, or play it. Time only moves here.', ja:'滲みを手で進めるか、再生する。時はここでだけ動く。'}, noteScreen:{en:'The screen strengthens automatically toward 装. A water screen lays the riso pattern as repulsion — set inks get pushed into the gaps.', ja:'網は装へ寄るほど強まる。水の網はリソの模様を反発として敷く — 定着した墨は隙間へ押し出される。'}, noteSave:{en:'Background is a viewing choice — not written into .urumizuri or .bakezuri. .bakezuri stores the whole process (passes + bleeds), seedless: every performance bleeds differently.', ja:'下地は見えかたの選択 — .urumizuri にも .bakezuri にも書かれない。.bakezuri は工程全体（摺りと滲み）を種なしで保つ。演じるたび滲みは異なる。'}
+  h_disguise:{en:'disguise', ja:'化け'}, h_separate:{en:'separate', ja:'分解'}, h_inks:{en:'inks', ja:'墨'}, h_bath:{en:'bath', ja:'水'}, h_screen:{en:'screen', ja:'網'}, h_bleed:{en:'bleed', ja:'滲み'}, h_pull:{en:'pull', ja:'摺り'}, h_process:{en:'process', ja:'経'}, poleSoak:{en:'soak', ja:'浸'}, poleSuit:{en:'suit', ja:'装'}, type:{en:'type', ja:'種'}, targetChannel:{en:'target', ja:'対象域'}, colour:{en:'colour', ja:'色'}, thin:{en:'thin', ja:'淡'}, addInk:{en:'+ add ink', ja:'＋墨を足す'}, delInk:{en:'− remove', ja:'－除く'}, clearInks:{en:'⊘ clear', ja:'⊘ 流す'}, wetness:{en:'wetness', ja:'湿り'}, bleedAmt:{en:'bleed', ja:'滲み'}, grainF:{en:'grain feathering', ja:'紙の毛羽'}, background:{en:'background', ja:'下地'}, renderOnly:{en:'· render only', ja:'· 表示のみ'}, substrate:{en:'substrate', ja:'地'}, water:{en:'水 water', ja:'水'}, paper:{en:'紙 paper', ja:'紙'}, overprint:{en:'overprint', ja:'重ね刷り'}, repelPrior:{en:'repel prior ink', ja:'下の墨を退ける'}, noteRepel:{en:'Captured by the next ink application. At 100%, new ink clears its whole footprint and warps earlier pigment into a ring.', ja:'次の墨の置き方として記録する。100%では新しい墨が接地面を空け、下の顔料を輪へ歪める。'}, subtractive:{en:'subtractive', ja:'減法'}, additive:{en:'additive', ja:'加法'}, dotPitch:{en:'dot pitch', ja:'網点間隔'}, dotJitter:{en:'dot jitter', ja:'網点の揺らぎ'}, waterScreen:{en:'lay water screen 水 · repel', ja:'水の網を敷く · 反発'}, play:{en:'▶ play bleed', ja:'▶ 滲みを再生'}, pause:{en:'❚❚ pause', ja:'❚❚ 停止'}, vframes:{en:'video · frames', ja:'動画 · コマ'}, vsteps:{en:'video · steps / frame', ja:'動画 · コマ毎の歩'}, renderVideo:{en:'render bleed → .webm', ja:'滲みを書き出す → .webm'}, clearBath:{en:'clear bath', ja:'浴を流す'}, undo:{en:'↶ undo', ja:'↶ 戻す'}, pngBg:{en:'on background', ja:'下地つき'}, pngStamp:{en:'stamp the pull', ja:'摺りを捺す'}, pngClear:{en:'ink only', ja:'墨のみ'}, openUrumi:{en:'open .urumizuri', ja:'.urumizuri を開く'}, openBake:{en:'perform .bakezuri', ja:'.bakezuri を演じる'}, loadImg:{en:'load image', ja:'画像を読む'}, sepBtn:{en:'separate → bath', ja:'分解 → 浴'}, playing:{en:'playing', ja:'再生中'}, still:{en:'still', ja:'静止'}, nodes:{en:'nodes', ja:'節'}, marks:{en:'marks', ja:'点'}, sep:{en:'分解', ja:'分解'}, chainEmpty:{en:'— no passes yet · deposit, then play the bleed —', ja:'— まだ摺りなし · 置いてから滲みを再生 —'}, sepDone:{en:'separated into {n} inks @ pitch {p} — play the bleed to dissolve the screen', ja:'{n}色に分解 · 網点{p} — 滲みを再生して網を溶かす'}, noteSep:{en:'A picture, cut into your inks on the screen — palette + grid, the quantization — laid down wet so the bleed dissolves it back. Your inks are the basis; colours they can\'t mix don\'t survive.', ja:'画像を網の上であなたの墨へ裁つ — 色数＋格子、量子化だ — 濡れたまま置けば滲みが解いてゆく。墨が基底、混ぜられない色は残らない。'}, noteBleed:{en:'Step the bleed by hand, or play it. Time only moves here.', ja:'滲みを手で進めるか、再生する。時はここでだけ動く。'}, noteScreen:{en:'The screen strengthens automatically toward 装. A water screen lays the riso pattern as repulsion — set inks get pushed into the gaps.', ja:'網は装へ寄るほど強まる。水の網はリソの模様を反発として敷く — 定着した墨は隙間へ押し出される。'}, noteSave:{en:'Background is a viewing choice — not written into .urumizuri or .bakezuri. .bakezuri stores the whole process (passes + bleeds), seedless: every performance bleeds differently.', ja:'下地は見えかたの選択 — .urumizuri にも .bakezuri にも書かれない。.bakezuri は工程全体（摺りと滲み）を種なしで保つ。演じるたび滲みは異なる。'}
 };
 let lang = 'en';
 function t(key){ const e=I18N[key]; return e ? (e[lang]||e.en) : key; }

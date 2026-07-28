@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bakezuri 2b - live riso bath</title>
+<style>
+  :root{
+    color-scheme:dark;
+    --night:#111719;--panel:#192225;--line:#314043;--text:#e8eadf;
+    --muted:#94a09b;--paper:#f2f0df;--accent:#8fd2bd;--hot:#e77770;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:radial-gradient(circle at 65% 15%,#203437 0,transparent 35%),var(--night);color:var(--text)}
+  body{font:13px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;display:grid;grid-template-rows:auto 1fr}
+  header{padding:20px 25px 16px;display:flex;align-items:end;gap:18px;border-bottom:1px solid var(--line)}
+  h1{margin:0;font:700 clamp(30px,4.8vw,62px)/.88 Georgia,serif;letter-spacing:-.055em}
+  h1 span{color:var(--hot)}
+  .subtitle{max-width:620px;color:var(--muted);font-size:11px}
+  .badge{margin-left:auto;border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:var(--accent);white-space:nowrap;font-size:10px}
+  main{min-height:0;padding:14px;display:grid;grid-template-columns:270px 1fr;gap:16px}
+  aside,.stage{background:#151d1fee;border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 50px #0007}
+  aside{padding:17px;display:flex;flex-direction:column;gap:20px;overflow:auto}
+  section{display:grid;gap:9px}
+  h2{margin:0;color:var(--accent);font-size:9px;text-transform:uppercase;letter-spacing:.16em}
+  .control{display:grid;gap:5px}
+  .label{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px}
+  .read{color:var(--text)}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  input[type=color]{flex:0 0 48px;width:48px;height:35px;border:1px solid var(--line);border-radius:8px;background:transparent;padding:2px;cursor:pointer}
+  input:disabled{opacity:.38;cursor:not-allowed}
+  button{font:inherit;min-height:35px;color:var(--text);background:#202c2f;border:1px solid var(--line);border-radius:9px;padding:8px 10px;cursor:pointer}
+  button:hover{border-color:var(--accent);background:#263638}
+  button.primary{background:var(--accent);color:#10201d;border-color:transparent;font-weight:700}
+  .row{display:flex;gap:7px;align-items:center}.row>*{flex:1}
+  .loads{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-height:28px}
+  .load{flex:0 0 24px;width:24px;height:24px;min-height:24px;padding:0;border-radius:50%;border:2px solid #ffffff30;box-shadow:0 0 0 1px #0008}
+  .load.current{outline:2px solid var(--accent);outline-offset:2px}
+  .note{margin:0;color:var(--muted);font-size:10px}
+  .stage{min-width:0;min-height:470px;padding:12px;display:grid;grid-template-rows:auto 1fr auto;gap:9px}
+  .stage-head,.stage-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted);font-size:10px}
+  .canvas-wrap{position:relative;min-height:0;display:grid;place-items:center;border-radius:11px;overflow:hidden;background:repeating-linear-gradient(45deg,#0e1517 0 8px,#11191b 8px 16px)}
+  canvas{display:block;width:100%;height:100%;object-fit:contain;background:var(--paper);touch-action:none;cursor:crosshair}
+  .hint{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;text-align:center;color:#20333099;font:italic clamp(18px,2.6vw,30px)/1.35 Georgia,serif;transition:opacity .2s}
+  .hint small{display:block;margin-top:7px;font:10px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.05em}
+  .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:#657773;vertical-align:1px}
+  .pulse.live{background:var(--hot);box-shadow:0 0 0 4px #e7777028}
+  @media(max-width:780px){header{align-items:start;flex-wrap:wrap}.badge{margin-left:0}main{grid-template-columns:1fr;grid-template-rows:minmax(52vh,1fr) auto}.stage{grid-row:1;min-height:52vh}aside{grid-row:2}}
+</style>
+</head>
+<body>
+<header>
+  <h1><span>bake</span>zuri 2b</h1>
+  <div class="subtitle">Riso screen as many live suminagashi deposit points. One loaded pigment forms one wet film; switching away and back creates a new alias that can repel its own earlier colour.</div>
+  <div class="badge">live riso bath study</div>
+</header>
+
+<main>
+  <aside>
+    <section>
+      <h2>pigment load</h2>
+      <div class="row">
+        <input id="colour" type="color" value="#167d89" aria-label="Loaded pigment colour">
+        <button id="newPigment" class="primary">+ new pigment</button>
+      </div>
+      <div id="loads" class="loads"></div>
+      <p class="note">Click any swatch to reload it. That load gets a fresh physical film on first contact; consecutive strokes stay in that film until load changes.</p>
+      <button id="waterLoad">load water / negative screen</button>
+    </section>
+
+    <section>
+      <h2>riso application</h2>
+      <div class="control">
+        <div class="label"><span>repel pressure</span><span id="interactionRead" class="read"></span></div>
+        <input id="interaction" type="range" min="0" max="100" value="100">
+      </div>
+      <div class="control">
+        <div class="label"><span>brush radius</span><span id="brushRead" class="read"></span></div>
+        <input id="brush" type="range" min="8" max="56" value="26">
+      </div>
+      <div class="control">
+        <div class="label"><span>screen pitch</span><span id="screenRead" class="read"></span></div>
+        <input id="screen" type="range" min="3" max="14" value="6">
+      </div>
+      <p class="note">Brush reveals every screen port under its footprint. Ports deposit once per stroke; overlapping brush stamps do not double-feed them.</p>
+    </section>
+
+    <section>
+      <h2>live bath</h2>
+      <div class="control">
+        <div class="label"><span>bleed</span><span id="bleedRead" class="read"></span></div>
+        <input id="bleed" type="range" min="0" max="100" value="10">
+      </div>
+      <p class="note">Momentum and settling run continuously. Water uses the same riso screen but moves pigment outward instead of adding colour.</p>
+    </section>
+
+    <section>
+      <h2>bath</h2>
+      <button id="clear">clear water</button>
+    </section>
+  </aside>
+
+  <div class="stage">
+    <div class="stage-head">
+      <span><i id="pulse" class="pulse"></i><span id="stateText">calm</span></span>
+      <span id="loadText">ink 1 loaded</span>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="bath" width="720" height="480"></canvas>
+      <div id="hint" class="hint"><div>draw through the riso screen<small>one brush footprint = many live deposit points</small></div></div>
+    </div>
+    <div class="stage-foot">
+      <span>screen placement / separate wet films / automatic fluid motion</span>
+      <span id="stats">0 films / 0 dots</span>
+    </div>
+  </div>
+</main>
+
+<script src="bakezuri-core.js"></script>
+<script>
+"use strict";
+
+const Core=window.BakezuriCore, Basic=Core.Basic, Sumi=Core.Sumi, Riso=Core.Riso;
+const SW=240, SH=160, SUPER=2, RW=SW*SUPER, RH=SH*SUPER;
+const bath=document.getElementById('bath'), ctx=bath.getContext('2d');
+const low=document.createElement('canvas'), lowCtx=low.getContext('2d');
+low.width=RW;low.height=RH;
+const pixels=lowCtx.createImageData(RW,RH), paper=[0xf2/255,0xf0/255,0xdf/255];
+const palette=['#167d89','#ed566f','#d0a629','#5947a8','#278f62','#d66d28','#222127'];
+const colour=document.getElementById('colour'), interaction=document.getElementById('interaction');
+const brush=document.getElementById('brush'), screenCtl=document.getElementById('screen'), bleed=document.getElementById('bleed');
+const hint=document.getElementById('hint'), pulse=document.getElementById('pulse');
+let state,pigments,films,current,loadType='ink',loadedFilm=null,stroke=null,lastPoint=null;
+let drawing=false,pointerId=null,hasInk=false,fedDots=0,lastTime=performance.now();
+
+function makePigment(hex,index){
+  return {hex,colour:Basic.hexToRgb(hex),angle:.12+index*.49,seed:index+1};
+}
+
+function reset(){
+  state=Sumi.create(SW,SH);pigments=[makePigment(palette[0],0)];films=[];
+  current=0;loadType='ink';loadedFilm=null;stroke=null;lastPoint=null;
+  drawing=false;pointerId=null;hasInk=false;fedDots=0;
+  colour.value=palette[0];colour.disabled=false;
+  renderLoads();updateUI();render();
+}
+
+function addPigment(){
+  if(pigments.length>=10)return;
+  const hex=palette[pigments.length%palette.length];
+  pigments.push(makePigment(hex,pigments.length));
+  current=pigments.length-1;loadType='ink';loadedFilm=null;
+  colour.value=hex;colour.disabled=false;
+  renderLoads();updateUI();render();
+}
+
+function selectInk(index){
+  if(index<0||index>=pigments.length)return;
+  current=index;loadType='ink';loadedFilm=null;
+  colour.value=pigments[current].hex;colour.disabled=false;
+  renderLoads();updateUI();
+}
+
+function selectWater(){
+  loadType='water';loadedFilm=null;colour.disabled=true;
+  renderLoads();updateUI();
+}
+
+function renderLoads(){
+  document.getElementById('loads').innerHTML=pigments.map((pigment,index)=>
+    '<button class="load'+(loadType==='ink'&&index===current?' current':'')+'" data-pigment="'+index+'" style="background:'+pigment.hex+'" title="reload ink '+(index+1)+'" aria-label="Reload ink '+(index+1)+'"></button>'
+  ).join('');
+  document.getElementById('waterLoad').classList.toggle('primary',loadType==='water');
+  document.getElementById('loadText').textContent=loadType==='water'?'water screen loaded':'ink '+(current+1)+' of '+pigments.length+' loaded';
+}
+
+function updateUI(motion){
+  document.getElementById('interactionRead').textContent=interaction.value+'%';
+  document.getElementById('brushRead').textContent=brush.value+' cells';
+  document.getElementById('screenRead').textContent=screenCtl.value+' cells';
+  document.getElementById('bleedRead').textContent=bleed.value+'%';
+  if(motion==null)motion=Sumi.motion(state);
+  const moving=motion>.002;
+  document.getElementById('stateText').textContent=drawing?'screening '+loadType:(moving?'bath moving':'calm');
+  document.getElementById('stats').textContent=films.length+' film'+(films.length===1?'':'s')+' / '+fedDots+' dots / motion '+motion.toFixed(3);
+  pulse.classList.toggle('live',drawing||moving);
+}
+
+function pointFromEvent(event){
+  const box=bath.getBoundingClientRect();
+  return {
+    x:Math.max(0,Math.min(SW-1,(event.clientX-box.left)/box.width*SW)),
+    y:Math.max(0,Math.min(SH-1,(event.clientY-box.top)/box.height*SH))
+  };
+}
+
+function ensureLoadedFilm(){
+  if(loadedFilm!=null)return loadedFilm;
+  films.push({pigment:current,layer:Sumi.addLayer(state)});
+  loadedFilm=films.length-1;
+  return loadedFilm;
+}
+
+function screenStamp(point){
+  const pigment=pigments[current];
+  const points=Riso.stamp(stroke,{
+    width:SW,height:SH,x:point.x,y:point.y,reach:+brush.value,pitch:+screenCtl.value,
+    angle:loadType==='water'?0:pigment.angle,seed:loadType==='water'?97:pigment.seed
+  });
+  if(!points.length)return;
+  const dotRadius=Math.max(1,+screenCtl.value*.34),strength=+interaction.value/100;
+  const filmIndex=loadType==='ink'?ensureLoadedFilm():null;
+  for(const dot of points){
+    if(loadType==='water')Sumi.injectWaterPixel(state,dot.x,dot.y,1);
+    else Sumi.injectScreenDot(state,filmIndex,dot.x,dot.y,dotRadius,strength);
+  }
+  fedDots+=points.length;hasInk=true;
+}
+
+function drawTo(point){
+  const path=Riso.path(lastPoint,point,Math.max(1.5,+screenCtl.value*.55));
+  for(const sample of path)screenStamp(sample);
+  lastPoint=point;
+}
+
+function render(){
+  Basic.resolveSeparatedHi(
+    films.map(film=>film.layer.field),
+    films.map(film=>pigments[film.pigment].colour),
+    paper,pixels.data,RW,RH,SW,SH,4.2
+  );
+  lowCtx.putImageData(pixels,0,0);
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+  ctx.clearRect(0,0,bath.width,bath.height);
+  ctx.drawImage(low,0,0,bath.width,bath.height);
+  hint.style.opacity=hasInk?'0':'1';
+}
+
+bath.addEventListener('pointerdown',event=>{
+  event.preventDefault();drawing=true;pointerId=event.pointerId;
+  stroke=Riso.createStroke();lastPoint=null;
+  bath.setPointerCapture(event.pointerId);
+  drawTo(pointFromEvent(event));
+});
+bath.addEventListener('pointermove',event=>{
+  if(!drawing||event.pointerId!==pointerId)return;
+  drawTo(pointFromEvent(event));
+});
+function release(event){
+  if(event.pointerId!==pointerId)return;
+  drawing=false;pointerId=null;stroke=null;lastPoint=null;
+}
+bath.addEventListener('pointerup',release);
+bath.addEventListener('pointercancel',release);
+bath.addEventListener('lostpointercapture',event=>{if(event.pointerId===pointerId)release(event)});
+
+colour.addEventListener('input',()=>{
+  pigments[current].hex=colour.value;
+  pigments[current].colour=Basic.hexToRgb(colour.value);
+  renderLoads();render();
+});
+document.getElementById('loads').addEventListener('click',event=>{
+  const swatch=event.target.closest('[data-pigment]');
+  if(swatch)selectInk(+swatch.dataset.pigment);
+});
+for(const control of [interaction,brush,screenCtl,bleed])control.addEventListener('input',()=>updateUI());
+document.getElementById('newPigment').onclick=addPigment;
+document.getElementById('waterLoad').onclick=selectWater;
+document.getElementById('clear').onclick=reset;
+
+function frame(now){
+  const dt=Math.min(1.5,Math.max(.25,(now-lastTime)/16.667));lastTime=now;
+  Sumi.step(state,{dt,viscosity:.18,drag:.94,maxSpeed:2.7,bleed:(+bleed.value/100)*.045});
+  const motion=Sumi.motion(state);updateUI(motion);render();
+  requestAnimationFrame(frame);
+}
+
+reset();requestAnimationFrame(frame);
+</script>
+</body>
+</html>

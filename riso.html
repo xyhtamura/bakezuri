@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bakezuri 2 - image riso bath</title>
+<style>
+  :root{
+    color-scheme:dark;
+    --night:#111719;--panel:#192225;--line:#314043;--text:#e8eadf;
+    --muted:#94a09b;--paper:#f2f0df;--accent:#8fd2bd;--hot:#e77770;--gold:#e9c24a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%;background:radial-gradient(circle at 65% 15%,#203437 0,transparent 35%),var(--night);color:var(--text)}
+  body{font:13px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;display:grid;grid-template-rows:auto 1fr}
+  header{padding:20px 25px 16px;display:flex;align-items:end;gap:18px;border-bottom:1px solid var(--line)}
+  h1{margin:0;font:700 clamp(30px,4.8vw,62px)/.88 Georgia,serif;letter-spacing:-.055em}
+  h1 span{color:var(--hot)}
+  .subtitle{max-width:650px;color:var(--muted);font-size:11px}
+  .badge{margin-left:auto;border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:var(--accent);white-space:nowrap;font-size:10px}
+  main{min-height:0;padding:14px;display:grid;grid-template-columns:290px 1fr;gap:16px}
+  aside,.stage{background:#151d1fee;border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 50px #0007}
+  aside{padding:17px;display:flex;flex-direction:column;gap:20px;overflow:auto}
+  section{display:grid;gap:9px}
+  h2{margin:0;color:var(--accent);font-size:9px;text-transform:uppercase;letter-spacing:.16em}
+  .control{display:grid;gap:5px}
+  .label{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px}
+  .read{color:var(--text)}
+  .row{display:flex;gap:7px;align-items:center}.row>*{flex:1}
+  input,select,button{font:inherit}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  input[type=color]{flex:0 0 48px;width:48px;height:35px;border:1px solid var(--line);border-radius:8px;background:transparent;padding:2px;cursor:pointer}
+  select{width:100%;min-height:35px;color:var(--text);background:#202c2f;border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  button,.file-button{font:inherit;min-height:35px;color:var(--text);background:#202c2f;border:1px solid var(--line);border-radius:9px;padding:8px 10px;cursor:pointer;text-align:center}
+  button:hover,.file-button:hover{border-color:var(--accent);background:#263638}
+  button.primary{background:linear-gradient(150deg,var(--gold),#b8901f);color:#1a1206;border-color:transparent;font-weight:700}
+  button:disabled{opacity:.35;cursor:not-allowed}
+  .loads{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-height:28px}
+  .load{flex:0 0 24px;width:24px;height:24px;min-height:24px;padding:0;border-radius:50%;border:2px solid #ffffff30;box-shadow:0 0 0 1px #0008}
+  .load.current{outline:2px solid var(--accent);outline-offset:2px}
+  .note{margin:0;color:var(--muted);font-size:10px}
+  .preview-wrap{position:relative;display:grid;place-items:center;min-height:92px;max-height:150px;overflow:hidden;border:1px solid var(--line);border-radius:9px;background:#0f1618}
+  #preview{display:block;max-width:100%;max-height:148px;width:auto;height:auto;background:#f2f0df}
+  .preview-empty{position:absolute;color:#71807b;font-size:10px;pointer-events:none}
+  .stage{min-width:0;min-height:500px;padding:12px;display:grid;grid-template-rows:auto 1fr auto;gap:9px}
+  .stage-head,.stage-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted);font-size:10px}
+  .canvas-wrap{position:relative;min-height:0;display:grid;place-items:center;border-radius:11px;overflow:hidden;background:repeating-linear-gradient(45deg,#0e1517 0 8px,#11191b 8px 16px)}
+  #bath{display:block;width:100%;height:100%;object-fit:contain;background:var(--paper)}
+  .hint{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;text-align:center;color:#20333099;font:italic clamp(18px,2.6vw,30px)/1.35 Georgia,serif;transition:opacity .2s}
+  .hint small{display:block;margin-top:7px;font:10px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.05em}
+  .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:#657773;vertical-align:1px}
+  .pulse.live{background:var(--hot);box-shadow:0 0 0 4px #e7777028}
+  @media(max-width:800px){header{align-items:start;flex-wrap:wrap}.badge{margin-left:0}main{grid-template-columns:1fr;grid-template-rows:minmax(52vh,1fr) auto}.stage{grid-row:1;min-height:52vh}aside{grid-row:2}}
+</style>
+</head>
+<body>
+<header>
+  <h1><span>bake</span>zuri 2</h1>
+  <div class="subtitle">Upload one image. Choose one pigment and one image target. Run one riso pass into the live bath. Change ink, target, or dot geometry, then run again.</div>
+  <div class="badge">single-ink image spine</div>
+</header>
+
+<main>
+  <aside>
+    <section>
+      <h2>1 / source image</h2>
+      <label class="file-button">choose image<input type="file" id="imageFile" accept="image/*" hidden></label>
+      <div class="preview-wrap">
+        <canvas id="preview" width="240" height="160"></canvas>
+        <span id="previewEmpty" class="preview-empty">no image loaded</span>
+      </div>
+      <p id="imageStatus" class="note">New image starts a fresh bath.</p>
+    </section>
+
+    <section>
+      <h2>2 / one ink</h2>
+      <div class="row">
+        <input id="colour" type="color" value="#167d89" aria-label="Current pigment colour">
+        <button id="newPigment">+ new pigment</button>
+      </div>
+      <div id="loads" class="loads"></div>
+      <div class="control">
+        <div class="label"><span>image target</span><span id="targetRead" class="read"></span></div>
+        <select id="target">
+          <option value="brightness">brightness / shadows</option>
+          <option value="highlights">brightness / highlights</option>
+          <option value="r">red channel</option>
+          <option value="g">green channel</option>
+          <option value="b">blue channel</option>
+          <option value="cyan">cyan component</option>
+          <option value="magenta">magenta component</option>
+          <option value="yellow">yellow component</option>
+          <option value="contrast">local contrast</option>
+        </select>
+      </div>
+      <p class="note">Swatches are reusable pigment identities. Every Run creates one fresh physical film, including repeated runs of same ink.</p>
+    </section>
+
+    <section>
+      <h2>3 / riso pass</h2>
+      <div class="control">
+        <div class="label"><span>dot pitch</span><span id="pitchRead" class="read"></span></div>
+        <input id="pitch" type="range" min="3" max="16" value="7">
+      </div>
+      <div class="control">
+        <div class="label"><span>dot size</span><span id="dotSizeRead" class="read"></span></div>
+        <input id="dotSize" type="range" min="25" max="125" value="90">
+      </div>
+      <div class="control">
+        <div class="label"><span>repel pressure</span><span id="interactionRead" class="read"></span></div>
+        <input id="interaction" type="range" min="0" max="100" value="100">
+      </div>
+      <button id="runRiso" class="primary" disabled>run this ink</button>
+      <p id="runStatus" class="note">Load image to begin.</p>
+    </section>
+
+    <section>
+      <h2>live bath</h2>
+      <div class="control">
+        <div class="label"><span>bleed</span><span id="bleedRead" class="read"></span></div>
+        <input id="bleed" type="range" min="0" max="100" value="10">
+      </div>
+      <button id="clear">clear bath / keep image</button>
+    </section>
+  </aside>
+
+  <div class="stage">
+    <div class="stage-head">
+      <span><i id="pulse" class="pulse"></i><span id="stateText">calm</span></span>
+      <span id="loadText">ink 1 / shadows</span>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="bath" width="480" height="320"></canvas>
+      <div id="hint" class="hint"><div>load an image, then run one ink<small>each pass lands wet on every earlier pass</small></div></div>
+    </div>
+    <div class="stage-foot">
+      <span>image target → riso dots → live wet film</span>
+      <span id="stats">0 passes / 0 dots</span>
+    </div>
+  </div>
+</main>
+
+<script src="bakezuri-core.js"></script>
+<script>
+"use strict";
+
+const Core=window.BakezuriCore,Basic=Core.Basic,Sumi=Core.Sumi,Riso=Core.Riso,ImageMap=Core.Image;
+const SUPER=2,paper=[0xf2/255,0xf0/255,0xdf/255];
+const palette=['#167d89','#ed566f','#d0a629','#5947a8','#278f62','#d66d28','#222127'];
+const bath=document.getElementById('bath'),ctx=bath.getContext('2d');
+const low=document.createElement('canvas'),lowCtx=low.getContext('2d');
+const sourceCanvas=document.createElement('canvas'),sourceCtx=sourceCanvas.getContext('2d',{willReadFrequently:true});
+const preview=document.getElementById('preview'),previewCtx=preview.getContext('2d');
+const colour=document.getElementById('colour'),targetCtl=document.getElementById('target');
+const pitchCtl=document.getElementById('pitch'),dotSizeCtl=document.getElementById('dotSize');
+const interaction=document.getElementById('interaction'),bleed=document.getElementById('bleed');
+const hint=document.getElementById('hint'),pulse=document.getElementById('pulse'),runButton=document.getElementById('runRiso');
+let W=240,H=160,RW=W*SUPER,RH=H*SUPER,pixels,state,pigments,films,current=0;
+let sourceData=null,sourceName='',passCount=0,dotCount=0,printing=false,lastTime=performance.now();
+
+function makePigment(hex,index){
+  return {hex,colour:Basic.hexToRgb(hex),target:'brightness',angle:.12+index*.49,seed:index+1};
+}
+
+function allocate(width,height){
+  W=width;H=height;RW=W*SUPER;RH=H*SUPER;
+  state=Sumi.create(W,H);films=[];passCount=0;dotCount=0;
+  low.width=RW;low.height=RH;pixels=lowCtx.createImageData(RW,RH);
+  bath.width=RW;bath.height=RH;
+}
+
+function reset(){
+  pigments=[makePigment(palette[0],0)];current=0;sourceData=null;sourceName='';
+  allocate(240,160);colour.value=palette[0];targetCtl.value='brightness';
+  previewCtx.fillStyle='#f2f0df';previewCtx.fillRect(0,0,preview.width,preview.height);
+  document.getElementById('previewEmpty').style.display='block';
+  document.getElementById('imageStatus').textContent='New image starts a fresh bath.';
+  document.getElementById('runStatus').textContent='Load image to begin.';runButton.disabled=true;
+  renderLoads();updateUI();render();
+}
+
+function clearBath(){
+  state=Sumi.create(W,H);films=[];passCount=0;dotCount=0;
+  document.getElementById('runStatus').textContent=sourceData?'bath cleared — ready for ink '+(current+1):'Load image to begin.';
+  updateUI();render();
+}
+
+function addPigment(){
+  if(pigments.length>=10)return;
+  const hex=palette[pigments.length%palette.length];
+  pigments.push(makePigment(hex,pigments.length));current=pigments.length-1;
+  colour.value=hex;targetCtl.value=pigments[current].target;
+  renderLoads();updateUI();render();
+}
+
+function selectInk(index){
+  if(index<0||index>=pigments.length)return;
+  current=index;colour.value=pigments[current].hex;targetCtl.value=pigments[current].target;
+  renderLoads();updateUI();
+}
+
+function renderLoads(){
+  document.getElementById('loads').innerHTML=pigments.map((pigment,index)=>
+    '<button class="load'+(index===current?' current':'')+'" data-pigment="'+index+'" style="background:'+pigment.hex+'" title="select ink '+(index+1)+'" aria-label="Select ink '+(index+1)+'"></button>'
+  ).join('');
+}
+
+function targetLabel(value){
+  const option=targetCtl.querySelector('option[value="'+value+'"]');
+  return option?option.textContent:value;
+}
+
+function updateUI(motion){
+  document.getElementById('targetRead').textContent=targetLabel(pigments[current].target);
+  document.getElementById('pitchRead').textContent=pitchCtl.value+' cells';
+  document.getElementById('dotSizeRead').textContent=dotSizeCtl.value+'%';
+  document.getElementById('interactionRead').textContent=interaction.value+'%';
+  document.getElementById('bleedRead').textContent=bleed.value+'%';
+  document.getElementById('loadText').textContent='ink '+(current+1)+' / '+targetLabel(pigments[current].target);
+  if(motion==null)motion=Sumi.motion(state);
+  const moving=motion>.002;
+  document.getElementById('stateText').textContent=printing?'printing one ink':(moving?'bath moving':'calm');
+  document.getElementById('stats').textContent=passCount+' pass'+(passCount===1?'':'es')+' / '+dotCount+' dots / motion '+motion.toFixed(3);
+  pulse.classList.toggle('live',printing||moving);
+  hint.style.opacity=sourceData||films.length?'0':'1';
+}
+
+function loadImageFile(file){
+  if(!file||!file.type.startsWith('image/')){
+    document.getElementById('imageStatus').textContent='That file is not an image.';return;
+  }
+  const image=new Image(),url=URL.createObjectURL(file);
+  image.onload=()=>{
+    const dims=ImageMap.fitDimensions(image.naturalWidth,image.naturalHeight,240);
+    allocate(dims.width,dims.height);
+    sourceCanvas.width=W;sourceCanvas.height=H;
+    sourceCtx.fillStyle='#fff';sourceCtx.fillRect(0,0,W,H);sourceCtx.drawImage(image,0,0,W,H);
+    sourceData=sourceCtx.getImageData(0,0,W,H).data;sourceName=file.name;
+    preview.width=W;preview.height=H;previewCtx.drawImage(sourceCanvas,0,0);
+    document.getElementById('previewEmpty').style.display='none';
+    document.getElementById('imageStatus').textContent=file.name+' · '+image.naturalWidth+'×'+image.naturalHeight+' → bath '+W+'×'+H;
+    document.getElementById('runStatus').textContent='Ready: ink '+(current+1)+' / '+targetLabel(pigments[current].target);
+    runButton.disabled=false;URL.revokeObjectURL(url);updateUI();render();
+  };
+  image.onerror=()=>{
+    URL.revokeObjectURL(url);document.getElementById('imageStatus').textContent='Could not read that image.';
+  };
+  image.src=url;
+}
+
+function runRiso(){
+  if(!sourceData||printing)return;
+  printing=true;runButton.disabled=true;updateUI();
+  const pigment=pigments[current],pitch=+pitchCtl.value,size=+dotSizeCtl.value/100;
+  const targetField=ImageMap.extract(sourceData,W,H,pigment.target);
+  const ports=Riso.screen({width:W,height:H,pitch:pitch,angle:pigment.angle,seed:pigment.seed});
+  const deposits=[];
+  for(const port of ports){
+    const x=Math.max(0,Math.min(W-1,Math.round(port.x)));
+    const y=Math.max(0,Math.min(H-1,Math.round(port.y)));
+    const value=targetField[y*W+x];
+    if(value<=.012)continue;
+    const radius=Math.max(.6,Math.sqrt(value)*pitch*.5*size);
+    deposits.push({x:port.x,y:port.y,radius:radius});
+  }
+  if(deposits.length){
+    const filmIndex=films.length;
+    films.push({pigment:current,target:pigment.target,layer:Sumi.addLayer(state)});
+    const strength=+interaction.value/100;
+    for(const dot of deposits)Sumi.injectScreenDot(state,filmIndex,dot.x,dot.y,dot.radius,strength);
+    passCount++;dotCount+=deposits.length;
+    document.getElementById('runStatus').textContent='Pass '+passCount+': ink '+(current+1)+' / '+targetLabel(pigment.target)+' / '+deposits.length+' dots';
+  }else{
+    document.getElementById('runStatus').textContent='No dots for this image target.';
+  }
+  printing=false;runButton.disabled=false;updateUI();render();
+}
+
+function render(){
+  Basic.resolveSeparatedHi(
+    films.map(film=>film.layer.field),
+    films.map(film=>pigments[film.pigment].colour),
+    paper,pixels.data,RW,RH,W,H,4.2
+  );
+  lowCtx.putImageData(pixels,0,0);
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+  ctx.clearRect(0,0,bath.width,bath.height);ctx.drawImage(low,0,0,bath.width,bath.height);
+}
+
+document.getElementById('imageFile').addEventListener('change',event=>{
+  loadImageFile(event.target.files[0]);event.target.value='';
+});
+colour.addEventListener('input',()=>{
+  pigments[current].hex=colour.value;pigments[current].colour=Basic.hexToRgb(colour.value);
+  renderLoads();render();
+});
+targetCtl.addEventListener('change',()=>{
+  pigments[current].target=targetCtl.value;updateUI();
+  if(sourceData)document.getElementById('runStatus').textContent='Ready: ink '+(current+1)+' / '+targetLabel(pigments[current].target);
+});
+document.getElementById('loads').addEventListener('click',event=>{
+  const swatch=event.target.closest('[data-pigment]');if(swatch)selectInk(+swatch.dataset.pigment);
+});
+for(const control of [pitchCtl,dotSizeCtl,interaction,bleed])control.addEventListener('input',()=>updateUI());
+document.getElementById('newPigment').onclick=addPigment;
+runButton.onclick=runRiso;
+document.getElementById('clear').onclick=clearBath;
+
+function frame(now){
+  const dt=Math.min(1.5,Math.max(.25,(now-lastTime)/16.667));lastTime=now;
+  Sumi.step(state,{dt,viscosity:.18,drag:.94,maxSpeed:2.7,bleed:(+bleed.value/100)*.045});
+  const motion=Sumi.motion(state);updateUI(motion);render();requestAnimationFrame(frame);
+}
+
+reset();requestAnimationFrame(frame);
+</script>
+</body>
+</html>

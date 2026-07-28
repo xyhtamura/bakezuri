@@ -46,9 +46,10 @@ on), a pinned region of the parameter space reached by the **disguise slider**. 
 the heart, and a CPU `Float32Array` field is reason-about-able and node-testable where an untested
 WebGL fluid sim would risk a black screen. (WebGL is on the roadmap for performance, §8.)
 
-- **Field:** up to `NUM_INKS` inks (default 4, dynamic 1–8 via add/remove). Each ink = one conserved
+- **Field:** up to `NUM_INKS` inks (default 2, dynamic 1–8 via add/remove). Each ink = one conserved
   `Float32Array(W*H)` of *load* per cell. Ping-pong `loadA`/`loadB`. Plus `fixField` (0..1 set
-  amount), `grainField` (static permeability noise), `waterSum`/`repelDelta` (repulsion scratch).
+  amount), `grainField` (static permeability noise), `waterSum`/`repelDelta` (water-repulsion and
+  one-shot application-repel scratch).
 - **Per frame (only while *playing*):** `step()` runs diffusion (bleed) + grain feathering + water
   repulsion + fixing; then `computeField()` resolves to the canvas. When *not* playing the bath is
   **static** and only re-resolves on demand (deposit / step / slider change). This is the default —
@@ -62,6 +63,7 @@ WebGL fluid sim would risk a black screen. (WebGL is on the roadmap for performa
   (interpolates colour→colour2 with load — thin and thick are different inks) · `glow` (emissive,
   adds light) · `iridescent` (thin-film interference colour computed from load + its local gradient =
   film-thickness slope) · `water` (clear, no colour/coverage — **repels** set inks).
+  Initial palette and newly added ink slots start as `flat`; special types remain opt-in.
 - **Water repulsion:** pigment-less water pushes other inks down the water gradient (upwind
   advection, mass-conserving). Water diffuses into a hill, so the void it carves drifts and breathes.
 - **Halftone screen:** jittered AM dots, per-ink rotation (riso misregistration). Strengthens toward
@@ -82,7 +84,7 @@ WebGL fluid sim would risk a black screen. (WebGL is on the roadmap for performa
 - **Undo** (fine-grained, at head): peels the last deposit by re-derivation (restore pass base, replay survivors), or pops the last node with nothing pending.
 - **Revert** (deliberate, while previewing): truncates the chain to the previewed node. Same button, relabeled by context.
 - **Preview** (clicking a historical chip): non-destructive — stashes the live head (incl. pending), shows the old snapshot, leaves chain and pending untouched. Selecting the head chip again restores the stash. Acting while previewing snaps back to head first, then acts.
-- Separation is now a replayable deposit (`{tool:'separate', sep, pitch}`) inside an ink pass, not a separate flag — this is what makes it composable with hand-marks in principle, though they still occupy the same single-category pending slot.
+- Separation is now a replayable deposit (`{tool:'separate', sep, pitch, repel, under}`) inside an ink pass, not a separate flag — this is what makes it composable with hand-marks in principle, though they still occupy the same single-category pending slot.
 - `MAX_SNAPS` is 64, parameterized, with the memory formula noted in the reducer header.
 
 
@@ -163,15 +165,19 @@ shared, frozen core.
 1. **Repulsive *coloured* inks** (territorial / immiscible). Generalize water's repulsion field to any
    ink flagged `repels`; exclude an ink from repelling *itself* (stays cohesive); keep rendering its
    pigment. Drops that jostle and carve but won't blend — true marbling immiscibility. ~afternoon.
+   **Stepping stone now implemented:** application repel is a one-shot deposit event, not an ink
+   property. Each mark or separation captures `{repel, under}` and mass-conservingly pushes only the
+   earlier committed pigment channels outward before laying new ink. At 100%, every prior-pigment cell
+   in the new drop's footprint moves through the Jaffer-style radial map into an outer annulus, leaving
+   a clean core and ring. It does not keep repelling during bleed, alter pigment colour, or complete
+   the continuous immiscibility item above.
 2. **Channel routing for separation.** Per-ink choice of what it renders from: brightness / R / G / B
    / **saturation** (vs the current auto-NNLS). "Which ink appears as what." Pairs with #1 (both
    per-ink properties). Moderate.
 
 **Mid-term:**
 3. **Harden the riso/separation core** (robustness pass before extraction).
-4. **Modularize → `bakezuri-core.js`.** Extract field sim + ink types + deposition + resolve + chain
-   into one module; image drag-drop + fit-to-screen + other utilities into small `script src` files.
-   **Freeze them.** Both Bakezuri and the future drawing tool `script src` the same core.
+4. **Modularize → `bakezuri-core.js` (Done 2026-07-28).** Extracted field sim + ink types + deposition + resolve + chain + host glue into `bakezuri-core.js`. All frontends (`suminagashi.html`, `riso.html`, `riso-live.html`) consume the frozen core module.
 5. **Settings-only load door.** Pull inks + params from any `.bakezuri`/`.urumizuri` and apply to a
    fresh bath, ignoring field/chain. Makes "extract a tuning from any file" real; clarifies the
    recipe / wet-matter / settings trio.
@@ -209,6 +215,10 @@ shared, frozen core.
   not references. Restore guards length mismatch (ink count can change mid-session).
 - **Water, separation, and repulsion all mutate the shared field — order matters.** `step()` order is
   diffuse → repel → fix.
+- **Application repel is event-local.** New deposits must capture both `repel` strength and the
+  `under` channel boundary. Replay uses those captured values; it must not infer them from current UI
+  state. Recipes from the short-lived prototype using `carve` are accepted as an alias; older recipes
+  without either field retain zero-repel behaviour.
 - **Two screens coexist:** the display-overlay screen (in `computeField`) and the physically-deposited
   dots (separation / water-screen). Don't double-count or assume one is the other.
 - **Background must never enter `.urumizuri` / `.bakezuri`.** It's a viewing layer.
@@ -322,7 +332,111 @@ Physics things to explore (Xyh):
 
 ---
 
-**Roadmap (§8) — mark #1 done**, with the caveat that `committedInkCount` is currently held together by a stopgap `inkLockBaseline` rather than the real ink-lifecycle model.
+**Roadmap (§8):** one-shot application repel is done; continuous coloured-ink immiscibility remains
+open. `committedInkCount` is still held together by the stopgap `inkLockBaseline` rather than the real
+ink-lifecycle model.
 
 *Stopping point: riso/marbling instrument is feature-complete enough to harden. Next concrete steps
 are §8 items 1–3, then modularize (§8.5) before forking the suminagashi tool (§8.7).*
+
+---
+
+## 12. The frontend family — one core, several baths
+
+The "basic-mechanics restart" grew into a **family of single-file frontends over one shared,
+node-tested core.** This is the §8.4 modularization arriving early and organically: don't fork the
+engine, fork the frontend. (Renamed 2026-07-15 from the old `indexN` numbering, which had become
+unreadable — the poles now carry their register.)
+
+**The shared core (node-tested `.js`, no build step):**
+- `bakezuri-basic.js` — deposition, diffusion, and the resolvers (`resolve` load-weighted mix,
+  `resolveSeparated` winner-take-all, `resolveSeparatedHi` the de-gridding resolver — see §13).
+- `bakezuri-sumi.js` — the **live field engine**: shared damped velocity field, pressure/repel
+  pulses with per-layer self-velocity (§13C), procedural growth source (lichen frontier), droppable
+  water, riso screen dots.
+- `bakezuri-riso.js` (screen geometry) · `bakezuri-image.js` (image-target extraction) ·
+  `bakezuri-repel.js` (older event-local radial displacement).
+
+**The frontends (each = a source of deposits + UI over the same core):**
+- `suminagashi.html` (浸, was `index3`) — pure suminagashi: live pointer feed, growth frontier,
+  droppable water, per-press films. The cleanest test bench; new laws land here first.
+- `riso.html` (装, was `index2`) — image → riso screen → screen-dot deposits, per-run films.
+- `riso-live.html` (was `index2-02`) — a live-riso variant.
+- `index.html` — the 化け摺り main / MVP (full instrument; §1–11). Slated to be **remade as a third
+  frontend on the frozen core** rather than kept as a separate codebase. `bakezuri-02.html` = an alt
+  main; `archive/riso-01.html` = a past riso.
+
+**The rule that makes the family work:** a **frontend owns only (a) how pigment enters the bath and
+(b) law *values* as data; the core owns the laws.** A law added to the core is inherited by every
+frontend with zero frontend edits — proven this session: the self-cohesion fix and the de-gridding
+resolver were written in the engine and appeared in every bath for free, `riso.html` included,
+untouched.
+
+Still deferred here: image-separation depth, ink types, glow/iridescence, substrates, disguise,
+fixing, process-chain UI, save/load, export, i18n, comb/rake.
+
+---
+
+## 13. Encoded layer ≠ render layer, and the pigment "chemistry" (2026-07-15 session)
+
+The spine of this session: **the coarse field is the encoding; smoothness and mixing are render
+decisions layered on top.** This is §1 restated at the last stage — the field dequantizes, and the
+resolver must not snap it back to the cell grid.
+
+**A. The pixel-encoding rule.** The scalar load fields (`SW×SH`, e.g. 240×160) are the *encoded wet
+matrix* — coarse, cheap for the sim, and the damageable body a future `.urumizuri` stores. Rendering
+**de-grids** it: `resolveSeparatedHi` resolves at `SUPER×` by sampling the fields as continuous
+(bilinear) functions, so the lattice never reaches the eye. Smoothness is a render concern, dialable
+(`SUPER`) independently of the sim; its natural eventual home is the WebGL port (§8.8). Cost is
+`SUPER²` px/frame.
+
+**B. The de-gridding resolver** (`resolveSeparatedHi`, two anti-aliased edges):
+- *Edge A (ink↔paper):* coverage `1−exp(−load·density)` of the **interpolated** load ramps smoothly
+  instead of stepping cell to cell.
+- *Edge B (ink↔ink):* strongest local load owns the pixel (later inks win ties = a new film laid on
+  top), so colours stay **pure**; only pixels straddling the equal-load curve blend → a crisp AA
+  seam. `seam` = blend half-width in load units. Steep seams stay crisp, diffuse ones feather.
+
+**C. Self-cohesion invariant (an ink must never advect its own pressure pulse).** Each layer stores
+its own velocity contribution (`svx/svy`), transported by the same diffuse+advect as the shared
+field; `advectLayer` moves a layer's pigment by **(shared − self)**. Fresh ink stays cohesive while
+earlier layers (self = 0) get shoved aside. This is literally the **diagonal of the coming repel
+matrix**. Also this session: deposit radius `1.6` (soft 3×3 disk, de-blocks lone pixels), bleed
+kernel `2:1` orthogonal:diagonal (bleeds in a disk, not a diamond).
+
+**D. The law scaffold — laws are data, not code.** Laws are **per-ink profiles** plus a **pairwise
+table keyed by pigment identity**, mapped down to the *film* pairs the engine sees (a film = one
+layer per press; two films of the same pigment relate by the diagonal = the self law). Sim-time laws
+(self-attraction, repel) live in `bakezuri-sumi.js`; render-time laws (mix) in `bakezuri-basic.js`.
+**New law = one field in the profile + one term in `step`/`resolve`,** inherited by every frontend.
+`suminagashi.html`'s `pigmentMix(a,b)` + `buildMixMatrix()` are the first rail; the global slider is
+a stand-in for a real per-pair table (no engine change needed to go per-pair).
+
+**E. Mix law (done).** Render-time, per-pair. `mixMatrix[i][j]·(overlap ratio min/max)` bleeds the
+runner-up into the winner: cores stay pure, only the shared band mixes, and because **bleed grows
+that band**, a mixed seam *blooms outward from placement over time*. Absent/0 ⇒ pure separation.
+Never touches the fields → mixing is reversible.
+
+**F. Repel × mix compose (and it's the payoff).** At repel 100 inks carve each other out — no shared
+cells, nothing to mix. Mixing needs co-occupation: either low repel (interpenetrate now) or
+bleed-grown overlap (watch it bloom). *Place separate, then watch the seam mix in* is two visual
+events from the same two fields.
+
+**G. The three-parameter pigment "chemistry" (the plan).** Treat pixels like molecules:
+- *intramolecular* — **self-attraction** (per-ink): resists its own diffusion / beads. Cohesion,
+  surface tension. Cleanest impl = per-ink bleed rate allowed to go **negative** (anti-diffusion).
+  It's the positive-feedback term → apply the §11.3 runaway recipe (saturate the sharpening, oppose
+  with ordinary diffusion, clamp per cell, hysteresis at rest), and keep it a **conservative flux**
+  so mass-conservation (§9) survives and it stays node-testable.
+- *intermolecular, mechanical* — **repel** (per-pair, sim/placement): shoves other species aside.
+  Generalize the self-velocity of C into `Σ_D repel[D][V]·svel_D`; diagonal 0 = the cohesion we have.
+- *intermolecular, chromatic* — **mix** (per-pair, render/time): blends colour where species coexist.
+- All three degrade to **marbling defaults** (inks repel each other, don't mix) so the user only opens
+  the hood for oil/water/watercolour. Repel = suminagashi immiscibility; mix = riso overprint — one
+  pairwise mechanism spans both poles of the §1 argument.
+
+**H. Ship order.** Laws into the core (defaults = current behaviour) → test in `suminagashi.html` →
+then the §8.4 freeze (extract `bakezuri-core.js` + the shared host glue: film lifecycle, the
+`SUPER`/low-canvas render pipeline, `allocate`) **before** remaking `index.html` as a third frontend
+on the frozen core. Order so far: de-gridding resolver ✅, mix law ✅, self-attraction ✅,
+pairwise repel ✅ (all 3 pigment chemistry laws complete).
